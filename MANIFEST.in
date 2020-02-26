@@ -1,0 +1,29 @@
+recursive-include testbook *.py
+recursive-include testbook *.ipynb
+recursive-include testbook *.json
+recursive-include testbook *.yaml
+recursive-include testbook *.keep
+recursive-include testbook *.txt
+
+include setup.py
+include requirements*.txt
+include tox.ini
+include pytest.ini
+include README.md
+include LICENSE
+include MANIFEST.in
+include *.md
+include *.toml
+
+include .bumpversion.cfg
+
+# Documentation
+graft docs
+# exclude build files
+prune docs/_build
+# exclude sample notebooks for binder
+prune binder
+# Test env
+prune .tox
+# Build files
+prune azure-pipelines.yml
