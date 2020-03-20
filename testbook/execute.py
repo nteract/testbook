@@ -1,10 +1,13 @@
-import pytest
+from functools import wraps
+
 import nbformat
-from testbook.testbook.client import TestbookNotebookClient
+
+from testbook.client import TestbookNotebookClient
 
 
 def execute_cell(notebook_filename, cell_index):
     def decorator(func):
+        @wraps(func)
         def wrapper(*args, **kwargs):
             with open(notebook_filename) as f:
                 nb = nbformat.read(f, as_version=4)

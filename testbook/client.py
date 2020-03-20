@@ -8,17 +8,6 @@ class TestbookNotebookClient(NotebookClient):
     and updates outputs
     """
 
-    def __init__(self, nb, km=None, **kw):
-        """Initializes the execution manager.
-        Parameters
-        ----------
-        nb : Notebook
-        km : KernerlManager (optional)
-            Optional kernel manager. If none is provided, a kernel manager will
-            be created.
-        """
-        super().__init__(nb, km=km, **kw)
-
     def execute(self, **kwargs):
         """
         Wraps the parent class process call slightly
