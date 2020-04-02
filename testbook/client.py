@@ -1,6 +1,7 @@
 import inspect
 import json
 import textwrap
+from collections.abc import Callable
 
 from nbformat.v4 import new_code_cell
 
@@ -66,18 +67,21 @@ class TestbookNotebookClient(NotebookClient):
         Returns:
             TestbookNode -- dict containing function and function call along with outputs
         """
+        if isinstance(func, str):
+            lines = textwrap.dedent(func)
+        elif isinstance(func, Callable):
+            lines = inspect.getsource(func)
+            args_str = ', '.join(map(json.dumps, args)) if args else ''
 
-        lines = inspect.getsource(func)
-        args_str = ', '.join(map(json.dumps, args)) if args else ''
-
-        # Add the function call to the same cell
-        lines += textwrap.dedent(
-            f"""
-            # Calling {func.__name__} 
-            {func.__name__}({args_str})
-        """
-        )
-
+            # Add the function call to the same cell
+            lines += textwrap.dedent(
+                f"""
+                # Calling {func.__name__} 
+                {func.__name__}({args_str})
+            """
+            )
+        else:
+            raise TypeError('can only inject function or code block as str')
 
         # Create a code cell
         inject_cell = new_code_cell(lines)
