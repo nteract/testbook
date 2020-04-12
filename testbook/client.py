@@ -19,9 +19,7 @@ class TestbookNotebookClient(NotebookClient):
         cell_idx = cell
 
         if all(isinstance(x, str) for x in cell):
-            cell_idx = []
-            for tag in cell:
-                cell_idx.append(get_cell_index(self.nb, tag))
+            cell_idx = [get_cell_index(self.nb, tag) for tag in cell]
 
         executed_cells = []
 
@@ -56,18 +54,6 @@ class TestbookNotebookClient(NotebookClient):
                 text += output['text']
 
         return text
-
-    def cell_output(self, cell_index):
-        """Return cell text output
-        
-        Arguments:
-            cell_index {int} -- cell index in notebook
-        
-        Returns:
-            list -- List of outputs for the given cell
-        """
-
-        outputs = self.nb['cells'][cell_index]['outputs']
 
     def inject(self, func, args=None):
         """Injects given function and executes with arguments passed
