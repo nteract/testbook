@@ -1,1 +1,3 @@
-pytest
+nbformat==5.0.4
+nbclient==0.2.0
+pytest==5.4.1
