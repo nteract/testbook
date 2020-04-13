@@ -8,22 +8,38 @@ from nbformat.v4 import new_code_cell
 from nbclient import NotebookClient
 from nbclient.client import CellExecutionError
 from testbook.testbooknode import TestbookNode
-from testbook.utils import get_cell_index
 
 
 class TestbookNotebookClient(NotebookClient):
+    def _get_cell_index(self, tag):
+        """Get cell index from the cell tag
+        
+        Arguments:
+            nb {dict} -- Notebook
+            tag {str} -- tag
+        
+        Returns:
+            int -- cell index
+        """
+        if not isinstance(tag, str):
+            raise TypeError('expected tag as str')
+
+        for idx, cell in enumerate(self.nb['cells']):
+            metadata = cell['metadata']
+            if "tags" in metadata and tag in metadata['tags']:
+                return idx
+
     def execute_cell(self, cell, execution_count=None, store_history=True):
         if not isinstance(cell, list):
             cell = [cell]
 
-        cell_idx = cell
+        cell_indexes = cell
 
         if all(isinstance(x, str) for x in cell):
-            cell_idx = [get_cell_index(self.nb, tag) for tag in cell]
+            cell_indexes = [self._get_cell_index(tag) for tag in cell]
 
         executed_cells = []
-
-        for idx in cell_idx:
+        for idx in cell_indexes:
             cell = super().execute_cell(
                 self.nb['cells'][idx],
                 idx,
@@ -46,7 +62,7 @@ class TestbookNotebookClient(NotebookClient):
         cell_index = cell
         if isinstance(cell, str):
             # Get cell index of this tag
-            cell_index = get_cell_index(self.nb, cell)
+            cell_index = self._get_cell_index(cell)
         text = ''
         outputs = self.nb['cells'][cell_index]['outputs']
         for output in outputs:
