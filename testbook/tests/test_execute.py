@@ -1,5 +1,3 @@
-import pytest
-
 from testbook import notebook_loader
 
 

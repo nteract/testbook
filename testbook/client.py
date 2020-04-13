@@ -6,18 +6,17 @@ from collections.abc import Callable
 from nbformat.v4 import new_code_cell
 
 from nbclient import NotebookClient
-from nbclient.client import CellExecutionError
 from testbook.testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
     def _get_cell_index(self, tag):
         """Get cell index from the cell tag
-        
+
         Arguments:
             nb {dict} -- Notebook
             tag {str} -- tag
-        
+
         Returns:
             int -- cell index
         """
@@ -52,10 +51,10 @@ class TestbookNotebookClient(NotebookClient):
 
     def cell_output_text(self, cell):
         """Return cell text output
-        
+
         Arguments:
             cell {int} -- cell index in notebook
-        
+
         Returns:
             str -- Text output
         """
@@ -73,11 +72,11 @@ class TestbookNotebookClient(NotebookClient):
 
     def inject(self, func, args=None):
         """Injects given function and executes with arguments passed
-        
+
         Arguments:
             func {__func__} -- function name
             args {list} -- list of arguments to be passed
-        
+
         Returns:
             TestbookNode -- dict containing function and function call along with outputs
         """
@@ -90,7 +89,7 @@ class TestbookNotebookClient(NotebookClient):
             # Add the function call to the same cell
             lines += textwrap.dedent(
                 f"""
-                # Calling {func.__name__} 
+                # Calling {func.__name__}
                 {func.__name__}({args_str})
             """
             )
