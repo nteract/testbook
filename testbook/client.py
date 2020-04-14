@@ -20,7 +20,9 @@ class TestbookNotebookClient(NotebookClient):
         Returns:
             int -- cell index
         """
-        if not isinstance(tag, str):
+        if isinstance(tag, int):
+            return tag
+        elif not isinstance(tag, str):
             raise TypeError('expected tag as str')
 
         for idx, cell in enumerate(self.nb['cells']):
@@ -70,7 +72,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def inject(self, func, args=None):
+    def inject(self, func, args=None, prerun=None, **kwargs):
         """Injects given function and executes with arguments passed
 
         Arguments:
@@ -96,11 +98,22 @@ class TestbookNotebookClient(NotebookClient):
         else:
             raise TypeError('can only inject function or code block as str')
 
+        # Execute the pre-run cells if passed
+        if prerun or prerun == 0:
+            self.execute_cell(prerun)
+
         # Create a code cell
         inject_cell = new_code_cell(lines)
 
+        # Find where to inject the cell
+        position = len(self.nb.cells)
+        if "before" in kwargs:
+            position = self._get_cell_index(kwargs["before"]) - 1
+        elif "after" in kwargs:
+            position = self._get_cell_index(kwargs["after"]) + 1
+
         # Insert it into the in memory notebook object and execute it
-        self.nb.cells.append(inject_cell)
-        cell = self.execute_cell(len(self.nb.cells) - 1)
+        self.nb.cells.insert(position, inject_cell)
+        cell = self.execute_cell(position)
 
         return TestbookNode(cell)

@@ -28,7 +28,7 @@ def helper_2(arg1, arg2):
 def test_inject(helper_func, args, expected_text, notebook_loader):
 
     with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
-        notebook.inject(helper_func, args).assert_output_text(expected_text)
+        assert notebook.inject(helper_func, args).output_text == expected_text
 
 
 @pytest.mark.parametrize(
@@ -54,7 +54,7 @@ def test_inject(helper_func, args, expected_text, notebook_loader):
 )
 def test_inject_code_block(code_block, expected_text, notebook_loader):
     with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
-        notebook.inject(code_block).assert_output_text(expected_text)
+        assert notebook.inject(code_block).output_text == expected_text
 
 
 def test_inject_raises_exception(notebook_loader):
@@ -65,3 +65,36 @@ def test_inject_raises_exception(notebook_loader):
         for value in values:
             with pytest.raises(TypeError):
                 notebook.inject(value)
+
+
+@pytest.mark.parametrize(
+    "prerun, code_block, expected_text",
+    [
+        (
+            0,
+            '''
+            print(f"{foo} {bar}")
+            ''',
+            "Hello World",
+        ),
+        (
+            [1, 2],
+            '''
+            say_hello()
+            say_bye()
+            ''',
+            "Hello there\nBye",
+        ),
+        (
+            ['hello', 'bye'],
+            '''
+            say_hello()
+            say_bye()
+            ''',
+            "Hello there\nBye",
+        ),
+    ],
+)
+def test_inject_with_prerun(prerun, code_block, expected_text, notebook_loader):
+    with notebook_loader('testbook/tests/resources/inject.ipynb') as notebook:
+        assert notebook.inject(code_block, prerun=prerun).output_text == expected_text
