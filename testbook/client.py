@@ -6,17 +6,39 @@ from collections.abc import Callable
 from nbformat.v4 import new_code_cell
 
 from nbclient import NotebookClient
-from nbclient.client import CellExecutionError
 from testbook.testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
-    def execute_cell(self, cell_index, execution_count=None, store_history=True):
-        if not isinstance(cell_index, list):
-            cell_index = [cell_index]
-        executed_cells = []
+    def _get_cell_index(self, tag):
+        """Get cell index from the cell tag
 
-        for idx in cell_index:
+        Arguments:
+            nb {dict} -- Notebook
+            tag {str} -- tag
+
+        Returns:
+            int -- cell index
+        """
+        if not isinstance(tag, str):
+            raise TypeError('expected tag as str')
+
+        for idx, cell in enumerate(self.nb['cells']):
+            metadata = cell['metadata']
+            if "tags" in metadata and tag in metadata['tags']:
+                return idx
+
+    def execute_cell(self, cell, execution_count=None, store_history=True):
+        if not isinstance(cell, list):
+            cell = [cell]
+
+        cell_indexes = cell
+
+        if all(isinstance(x, str) for x in cell):
+            cell_indexes = [self._get_cell_index(tag) for tag in cell]
+
+        executed_cells = []
+        for idx in cell_indexes:
             cell = super().execute_cell(
                 self.nb['cells'][idx],
                 idx,
@@ -27,16 +49,19 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
-    def cell_output_text(self, cell_index):
+    def cell_output_text(self, cell):
         """Return cell text output
-        
+
         Arguments:
-            cell_index {int} -- cell index in notebook
-        
+            cell {int} -- cell index in notebook
+
         Returns:
             str -- Text output
         """
-
+        cell_index = cell
+        if isinstance(cell, str):
+            # Get cell index of this tag
+            cell_index = self._get_cell_index(cell)
         text = ''
         outputs = self.nb['cells'][cell_index]['outputs']
         for output in outputs:
@@ -45,25 +70,13 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def cell_output(self, cell_index):
-        """Return cell text output
-        
-        Arguments:
-            cell_index {int} -- cell index in notebook
-        
-        Returns:
-            list -- List of outputs for the given cell
-        """
-
-        outputs = self.nb['cells'][cell_index]['outputs']
-
     def inject(self, func, args=None):
         """Injects given function and executes with arguments passed
-        
+
         Arguments:
             func {__func__} -- function name
             args {list} -- list of arguments to be passed
-        
+
         Returns:
             TestbookNode -- dict containing function and function call along with outputs
         """
@@ -76,7 +89,7 @@ class TestbookNotebookClient(NotebookClient):
             # Add the function call to the same cell
             lines += textwrap.dedent(
                 f"""
-                # Calling {func.__name__} 
+                # Calling {func.__name__}
                 {func.__name__}({args_str})
             """
             )
