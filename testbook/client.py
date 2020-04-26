@@ -7,6 +7,7 @@ from nbformat.v4 import new_code_cell
 
 from nbclient import NotebookClient
 from testbook.testbooknode import TestbookNode
+from testbook.error import CellTagNotFoundError
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -29,6 +30,8 @@ class TestbookNotebookClient(NotebookClient):
             metadata = cell['metadata']
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
+
+        raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
     def execute_cell(self, cell, execution_count=None, store_history=True):
         if not isinstance(cell, list):
@@ -72,7 +75,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def inject(self, func, args=None, prerun=None, **kwargs):
+    def inject(self, func, args=None, prerun=None):
         """Injects given function and executes with arguments passed
 
         Arguments:
@@ -105,15 +108,8 @@ class TestbookNotebookClient(NotebookClient):
         # Create a code cell
         inject_cell = new_code_cell(lines)
 
-        # Find where to inject the cell
-        position = len(self.nb.cells)
-        if "before" in kwargs:
-            position = self._get_cell_index(kwargs["before"]) - 1
-        elif "after" in kwargs:
-            position = self._get_cell_index(kwargs["after"]) + 1
-
         # Insert it into the in memory notebook object and execute it
-        self.nb.cells.insert(position, inject_cell)
-        cell = self.execute_cell(position)
+        self.nb.cells.append(inject_cell)
+        cell = self.execute_cell(len(self.nb.cells) - 1)
 
         return TestbookNode(cell)
