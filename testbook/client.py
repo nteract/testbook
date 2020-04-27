@@ -81,6 +81,7 @@ class TestbookNotebookClient(NotebookClient):
         Arguments:
             func {__func__} -- function name
             args {list} -- list of arguments to be passed
+            prerun -- cell(s) to be executed before injection
 
         Returns:
             TestbookNode -- dict containing function and function call along with outputs
