@@ -25,7 +25,7 @@ def helper_2(arg1, arg2):
         ),
     ],
 )
-def test_inject(helper_func, args, expected_text, notebook_loader):
+def test_inject(helper_func, args, expected_text):
 
     with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
         notebook.inject(helper_func, args).assert_output_text(expected_text)
@@ -52,12 +52,12 @@ def test_inject(helper_func, args, expected_text, notebook_loader):
         ),
     ],
 )
-def test_inject_code_block(code_block, expected_text, notebook_loader):
+def test_inject_code_block(code_block, expected_text):
     with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
         notebook.inject(code_block).assert_output_text(expected_text)
 
 
-def test_inject_raises_exception(notebook_loader):
+def test_inject_raises_exception():
     with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
 
         values = [3, {'key': 'value'}, ['a', 'b', 'c'], (1, 2, 3), {1, 2, 3}]
