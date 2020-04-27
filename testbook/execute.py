@@ -6,21 +6,17 @@ import pytest
 from testbook.client import TestbookNotebookClient
 
 
-@pytest.fixture
-def notebook_loader():
-    @contextmanager
-    def notebook_helper(nb_path, prerun=None, **kwargs):
-        with open(nb_path) as f:
-            nb = nbformat.read(f, as_version=4)
+@contextmanager
+def notebook_loader(nb_path, prerun=None, **kwargs):
+    with open(nb_path) as f:
+        nb = nbformat.read(f, as_version=4)
 
-        client = TestbookNotebookClient(nb)
-        with client.setup_kernel(**kwargs):
-            if prerun is not None:
-                client.execute_cell(prerun)
+    client = TestbookNotebookClient(nb)
+    with client.setup_kernel(**kwargs):
+        if prerun is not None:
+            client.execute_cell(prerun)
 
-            yield client
-
-    return notebook_helper
+        yield client
 
 
 def notebook(nb_path, prerun=None, **kwargs):
