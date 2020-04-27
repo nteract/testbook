@@ -7,7 +7,7 @@ from nbformat.v4 import new_code_cell
 
 from nbclient import NotebookClient
 from testbook.testbooknode import TestbookNode
-from testbook.error import CellTagNotFoundError
+from testbook.exceptions import CellTagNotFoundError
 
 
 class TestbookNotebookClient(NotebookClient):
