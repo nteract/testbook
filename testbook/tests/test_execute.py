@@ -1,4 +1,4 @@
-from testbook import notebook_loader
+from testbook import notebook_loader, notebook
 
 
 def test_execute_cell(notebook_loader):
@@ -17,3 +17,17 @@ def test_execute_cell_tags(notebook_loader):
 
         notebook.execute_cell(['prepare_foo', 'execute_foo'])
         assert notebook.cell_output_text('execute_foo') == 'foo\n'
+
+
+@notebook("testbook/tests/resources/foo.ipynb")
+def test_notebook(notebook):
+    notebook.execute_cell('test1')
+    assert notebook.cell_output_text('test1') == 'hello world\n[1, 2, 3]\n'
+
+    notebook.execute_cell(['prepare_foo', 'execute_foo'])
+    assert notebook.cell_output_text('execute_foo') == 'foo\n'
+
+
+@notebook("testbook/tests/resources/foo.ipynb", prerun='test1')
+def test_notebook_with_prerun(notebook):
+    assert notebook.cell_output_text(1) == 'hello world\n[1, 2, 3]\n'
