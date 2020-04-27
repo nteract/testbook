@@ -102,7 +102,7 @@ class TestbookNotebookClient(NotebookClient):
             raise TypeError('can only inject function or code block as str')
 
         # Execute the pre-run cells if passed
-        if prerun or prerun == 0:
+        if prerun is not None:
             self.execute_cell(prerun)
 
         # Create a code cell
