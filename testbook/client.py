@@ -7,6 +7,7 @@ from nbformat.v4 import new_code_cell
 
 from nbclient import NotebookClient
 from testbook.testbooknode import TestbookNode
+from testbook.exceptions import CellTagNotFoundError
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -20,13 +21,17 @@ class TestbookNotebookClient(NotebookClient):
         Returns:
             int -- cell index
         """
-        if not isinstance(tag, str):
+        if isinstance(tag, int):
+            return tag
+        elif not isinstance(tag, str):
             raise TypeError('expected tag as str')
 
         for idx, cell in enumerate(self.nb['cells']):
             metadata = cell['metadata']
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
+
+        raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
     def execute_cell(self, cell, execution_count=None, store_history=True):
         if not isinstance(cell, list):
@@ -70,12 +75,13 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def inject(self, func, args=None):
+    def inject(self, func, args=None, prerun=None):
         """Injects given function and executes with arguments passed
 
         Arguments:
             func {__func__} -- function name
             args {list} -- list of arguments to be passed
+            prerun -- cell(s) to be executed before injection
 
         Returns:
             TestbookNode -- dict containing function and function call along with outputs
@@ -95,6 +101,10 @@ class TestbookNotebookClient(NotebookClient):
             )
         else:
             raise TypeError('can only inject function or code block as str')
+
+        # Execute the pre-run cells if passed
+        if prerun is not None:
+            self.execute_cell(prerun)
 
         # Create a code cell
         inject_cell = new_code_cell(lines)
