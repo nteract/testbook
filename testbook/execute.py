@@ -41,4 +41,7 @@ class notebook_loader:
             with self.client.setup_kernel():
                 func(self.client, *args, **kwargs)
 
+        wrapper.__name__ = func.__name__
+        wrapper.__doc__ = func.__doc__
+
         return wrapper
