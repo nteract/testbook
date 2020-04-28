@@ -95,6 +95,6 @@ def test_inject_raises_exception():
         ),
     ],
 )
-def test_inject_with_prerun(prerun, code_block, expected_text, notebook_loader):
+def test_inject_with_prerun(prerun, code_block, expected_text):
     with notebook_loader('testbook/tests/resources/inject.ipynb') as notebook:
         assert notebook.inject(code_block, prerun=prerun).output_text == expected_text
