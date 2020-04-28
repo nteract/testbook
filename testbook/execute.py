@@ -37,17 +37,8 @@ class notebook_loader:
         self.client._cleanup_kernel()
 
     def __call__(self, func):
-        def wrapper():
-            self._start_kernel()
-
-            def inner(*args, **kwargs):
-                return func(self.client, *args, **kwargs)
-
-            self.client._cleanup_kernel()
-
-            inner.__name__ = func.__name__
-            inner.__doc__ = func.__doc__
-
-            return inner
+        def wrapper(*args, **kwargs):
+            with self.client.setup_kernel():
+                func(self.client, *args, **kwargs)
 
         return wrapper

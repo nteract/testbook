@@ -30,4 +30,5 @@ def test_notebook(notebook):
 
 @notebook_loader("testbook/tests/resources/foo.ipynb", prerun='test1')
 def test_notebook_with_prerun(notebook):
+    print(notebook.cell_output_text(1))
     assert notebook.cell_output_text(1) == 'hello world\n[1, 2, 3]\n'
