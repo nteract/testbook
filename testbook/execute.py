@@ -6,15 +6,42 @@ import pytest
 from testbook.client import TestbookNotebookClient
 
 
-@pytest.fixture
-def notebook_loader():
-    @contextmanager
-    def notebook_helper(nb_path, **kwargs):
-        with open(nb_path) as f:
+class notebook_loader:
+    def __init__(self, nb_path, prerun=None):
+        self.nb_path = nb_path
+        self.prerun = prerun
+
+        with open(self.nb_path) as f:
             nb = nbformat.read(f, as_version=4)
 
         client = TestbookNotebookClient(nb)
-        with client.setup_kernel(**kwargs):
-            yield client
 
-    return notebook_helper
+        if self.prerun is not None:
+            with client.setup_kernel():
+                client.execute_cell(self.prerun)
+
+        self.client = client
+
+    def _start_kernel(self):
+        if self.client.km is None:
+            self.client.start_kernel_manager()
+
+        if not self.client.km.has_kernel:
+            self.client.start_new_kernel_client()
+
+    def __enter__(self):
+        self._start_kernel()
+        return self.client
+
+    def __exit__(self, *args):
+        self.client._cleanup_kernel()
+
+    def __call__(self, func):
+        def wrapper(*args, **kwargs):
+            with self.client.setup_kernel():
+                func(self.client, *args, **kwargs)
+
+        wrapper.__name__ = func.__name__
+        wrapper.__doc__ = func.__doc__
+
+        return wrapper

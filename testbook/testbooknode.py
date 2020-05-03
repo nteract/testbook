@@ -3,7 +3,7 @@ from nbformat import NotebookNode
 
 class TestbookNode(NotebookNode):
     """
-    Extends `NodebookNode` to perform assertions
+    Extends `NotebookNode` to perform assertions
     """
 
     def __init__(self, *args, **kw):
