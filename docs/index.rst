@@ -24,7 +24,7 @@ Here is an example of a unit test written using testbook:
        assert notebook.cell_output_text('cell-1') == 'hello world'
 
 The above snippet contains ``notebook_loader`` used in a decorator pattern, it can also 
-be used in the context manager style as follows
+be used in the context manager style as follows:
 
 .. code-block:: python
 
