@@ -17,8 +17,8 @@ Here is an example of a unit test written using testbook:
 ```python
 @testbook.notebook_loader('/path/to/notebook.ipynb')
 def test_notebook(notebook):
-    notebook.execute_cell('cell-1')
-    assert notebook.cell_output_text('cell-1') == 'hello world'
+    notebook.execute_cell('cell1')
+    assert notebook.cell_output_text('cell1') == 'hello world'
 ```
 
 The above snippet contains ``notebook_loader`` used in a decorator pattern, it can also 
@@ -27,8 +27,8 @@ be used in the context manager style as follows:
 ```python
 def test_notebook(notebook):
     with testbook.notebook_loader('/path/to/notebook.ipynb') as notebook:
-        notebook.execute_cell('cell-1')
-        assert notebook.cell_output_text('cell-1') == 'hello world'
+        notebook.execute_cell('cell1')
+        assert notebook.cell_output_text('cell1') == 'hello world'
 ```
 
 ---
