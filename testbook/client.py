@@ -75,7 +75,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def inject(self, func, args=None, prerun=None):
+    def inject(self, func, args=None, **kwargs):
         """Injects given function and executes with arguments passed
 
         Arguments:
@@ -103,14 +103,24 @@ class TestbookNotebookClient(NotebookClient):
             raise TypeError('can only inject function or code block as str')
 
         # Execute the pre-run cells if passed
-        if prerun is not None:
-            self.execute_cell(prerun)
+        if kwargs.get("prerun") is not None:
+            self.execute_cell(kwargs["prerun"])
 
         # Create a code cell
         inject_cell = new_code_cell(lines)
 
+        if kwargs.get("after") and kwargs.get("before"):
+            raise TypeError("pass either before or after as kwargs")
+
+        inject_pos = len(self.nb.cells)
+
+        if kwargs.get("before") is not None:
+            inject_pos = self._get_cell_index(kwargs["after"])
+        elif kwargs.get("after") is not None:
+            inject_pos = self._get_cell_index(kwargs["before"])
+
         # Insert it into the in memory notebook object and execute it
-        self.nb.cells.append(inject_cell)
-        cell = self.execute_cell(len(self.nb.cells) - 1)
+        self.nb.cells.insert(inject_pos, inject_cell)
+        cell = self.execute_cell(inject_pos)
 
         return TestbookNode(cell)
