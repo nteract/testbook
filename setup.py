@@ -38,9 +38,11 @@ def read_reqs(fname):
     return [req.strip() for req in read(req_path).splitlines() if req.strip()]
 
 
-# Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+long_description = read(os.path.join(os.path.dirname(__file__), "README.md"))
+requirements = read(os.path.join(os.path.dirname(__file__), "requirements.txt"))
+dev_reqs = read_reqs(os.path.join(os.path.dirname(__file__), 'requirements-dev.txt'))
+doc_reqs = read_reqs(os.path.join(os.path.dirname(__file__), 'docs/requirements-doc.txt'))
+extras_require = {"test": dev_reqs, "dev": dev_reqs, "sphinx": doc_reqs}
 
 setup(
     name='testbook',
@@ -56,7 +58,8 @@ setup(
     url='https://github.com/nteract/testbook',
     packages=['testbook'],
     python_requires='>=3.5',
-    install_requires=read_reqs('requirements.txt'),
+    install_requires=requirements,
+    extras_require=extras_require,
     project_urls={
         'Documentation': 'https://testbook.readthedocs.io',
         'Funding': 'https://nteract.io',
