@@ -1,9 +1,12 @@
-testbook
-===================
+[![Documentation Status](https://readthedocs.org/projects/test-book/badge/?version=latest)](https://test-book.readthedocs.io/en/latest/?badge=latest)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+
+# TestBook
 
 **testbook** is a unit testing framework extension for testing code in Jupyter Notebooks.
-
----
 
 Previous attempts at unit testing notebooks involved writing the tests in the notebook itself. 
 However, testbook will allow for unit tests to be run against notebooks in separate test files, 
@@ -31,10 +34,7 @@ def test_notebook(notebook):
         assert notebook.cell_output_text('cell1') == 'hello world'
 ```
 
----
-
-Features
---------
+## Features
 
 - **Pre-run cells before test execution**
 
@@ -48,7 +48,7 @@ def test_notebook_with_prerun(notebook):
 **Note:** ``cell1``, ``cell2`` and ``cell3`` are Jupyter Notebook cell tags.
 
 
-- **Share kernel context across multiple tests**
+### **Share kernel context across multiple tests**
 
 ```python
 notebook_context = testbook.notebook_loader('notebook.ipynb', prerun=['tag1', 'tag2', 'tag3'])
@@ -62,7 +62,7 @@ def test_notebook_1():
         assert notebook.cell_output_text('tag5') == 'hello world'
 ```
 
-- **Inject functions**
+### **Inject functions**
 
 ```python
 def foo(name):
@@ -73,7 +73,7 @@ def test_notebook():
         assert notebook.inject(foo, args=['world']).output_text == 'hello world'
 ```
 
-- **Inject code snippets**
+### **Inject code snippets**
 
 ```python
 def test_notebook():
