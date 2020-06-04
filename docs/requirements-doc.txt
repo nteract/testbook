@@ -1,0 +1,5 @@
+Sphinx>=1.7
+sphinx-book-theme
+mock
+moto
+myst-parser
