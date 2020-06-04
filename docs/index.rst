@@ -18,18 +18,18 @@ Here is an example of a unit test written using testbook:
 
    @testbook.notebook_loader('/path/to/notebook.ipynb')
    def test_notebook(notebook):
-       notebook.execute_cell('cell1')
-       assert notebook.cell_output_text('cell1') == 'hello world'
+       notebook.execute_cell('cell-tag')
+       assert notebook.cell_output_text('cell-tag') == 'hello world'
 
 The above snippet demonstrates ``notebook_loader`` used in a decorator pattern, it can also 
 be used in the context manager style as follows:
 
 .. code-block:: python
 
-   def test_notebook(notebook):
+   def test_notebook():
        with testbook.notebook_loader('/path/to/notebook.ipynb') as notebook:
-           notebook.execute_cell('cell1')
-           assert notebook.cell_output_text('cell1') == 'hello world'
+           notebook.execute_cell('cell-tag')
+           assert notebook.cell_output_text('cell-tag') == 'hello world'
 
 
 -----------
@@ -87,6 +87,3 @@ Features
               print('hello world')
           """
           assert notebook.inject(code_snippet).output_text == 'hello world'
-
-   
-
