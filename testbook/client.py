@@ -75,20 +75,25 @@ class TestbookNotebookClient(NotebookClient):
 
         return text
 
-    def inject(self, func, args=None, prerun=None):
+    def inject(self, code, args=None, prerun=None):
         """Injects given function and executes with arguments passed
 
-        Arguments:
-            func {__func__} -- function name
-            args {list} -- list of arguments to be passed
-            prerun -- cell(s) to be executed before injection
+        Parameters
+        ----------
+            code :  str or Callable
+                Code or function to be injected
+            args : list (optional)
+                list of arguments to be passed to passed function
+            prerun : list (optional)
 
-        Returns:
-            TestbookNode -- dict containing function and function call along with outputs
+        Returns
+        -------
+            cell : TestbookNode
         """
-        if isinstance(func, str):
-            lines = textwrap.dedent(func)
-        elif isinstance(func, Callable):
+        if isinstance(code, str):
+            lines = textwrap.dedent(code)
+        elif isinstance(code, Callable):
+            func = code
             lines = inspect.getsource(func)
             args_str = ', '.join(map(json.dumps, args)) if args else ''
 
@@ -111,6 +116,6 @@ class TestbookNotebookClient(NotebookClient):
 
         # Insert it into the in memory notebook object and execute it
         self.nb.cells.append(inject_cell)
-        cell = self.execute_cell(len(self.nb.cells) - 1)
+        cell = TestbookNode(self.execute_cell(len(self.nb.cells) - 1))
 
-        return TestbookNode(cell)
+        return cell
