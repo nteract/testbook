@@ -10,7 +10,42 @@ from testbook.testbooknode import TestbookNode
 from testbook.exceptions import CellTagNotFoundError
 
 
+class notebook_object:
+    def __init__(self, client, name):
+        self.client = client
+        self.name = name
+
+    def __call__(self, *args):
+        args_str = ', '.join(map(json.dumps, args)) if args else ''
+        cell = self.client.inject(
+            f"""
+            {self.name}({args_str})
+        """
+        )
+        return get_execute_result(cell.outputs)
+
+
+def get_execute_result(outputs):
+    text = ''
+    for output in outputs:
+        if output.output_type == "execute_result":
+            text += output.data.get("text/plain", "")
+
+    return eval(text)
+
+
 class TestbookNotebookClient(NotebookClient):
+    def get_object(self, name):
+        return notebook_object(self, name)
+
+    def get_var(self, name):
+        cell = self.inject(
+            f"""
+            {name}
+        """
+        )
+        return get_execute_result(cell.outputs)
+
     def _get_cell_index(self, tag):
         """Get cell index from the cell tag
 
