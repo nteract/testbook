@@ -1,5 +1,5 @@
 TODO: Figure out make options needed for non-api changes
 
 ```
-sphinx-apidoc -f -o reference ../nbclient
+sphinx-apidoc -f -o reference ../testbook
 ```

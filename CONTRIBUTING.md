@@ -1,4 +1,5 @@
 # So You Want to Contribute to TestBook!
+
 We welcome all contributions to TestBook both large and small. We encourage you to join our community.
 
 ## Our Community Values
@@ -12,10 +13,13 @@ All contributions are equally important. Documentation, answering questions, and
 Please read our entire code of conduct [here](https://github.com/nteract/nteract/blob/master/CODE_OF_CONDUCT.md). Also, check out the for the [Python](https://github.com/nteract/nteract/blob/master/CODE_OF_CONDUCT.md) code of conduct.
 
 ## Setting up Your Development Environment
+
 Following these instructions should give you an efficient path to opening your first pull-request.
 
 ### Cloning the TestBook Repository
+
 Fork the repository to your local Github account. Clone this repository to your local development machine.
+
 ```bash
 git clone https://github.com/<your_account>/testbook
 cd testbook
@@ -31,6 +35,7 @@ source dev/bin/activate
 ```
 
 Install TestBook using:
+
 ```bash
 pip install -e '.[dev]'
 ```
@@ -44,18 +49,23 @@ If you are contributing with documentation please jump to [building documentatio
 We need to install the development package before we can run the tests. If anything is confusing below, always resort to the relevant documentation.
 
 For the most basic test runs against python 3.6 use this tox subset (callable after `pip install tox`):
+
 ```bash
 tox -e py36
 ```
+
 This will just execute the unittests against python 3.6 in a new virtual env. The first run will take longer to setup the virtualenv, but will be fast after that point.
 
 For a full test suite of all envs and linting checks simply run tox without any arguments
+
 ```bash
 tox
 ```
+
 This will require python3.5, python3.6, python3.7, and python 3.8 to be installed.
 
 Alternavitely pytest can be used if you have an environment already setup which works or has custom packages not present in the tox build.
+
 ```bash
 pytest
 ```
@@ -63,8 +73,6 @@ pytest
 Now there should be a working and editable installation of Papermill to start making your own contributions.
 
 ### Building Documentation
-
-TODO: Update when docs added
 
 The documentation is built using the [Sphinx](http://www.sphinx-doc.org/en/master/) engine. To contribute, edit the [RestructuredText (`.rst`)](https://en.wikipedia.org/wiki/ReStructuredText) files in the docs directory to make changes and additions.
 
@@ -79,6 +87,7 @@ This will generate `.html` files in the `/.tox/docs_out/` directory. Once you ar
 ## So You're Ready to Pull Request
 
 The general workflow for this will be:
+
 1. Run local tests
 2. Pushed changes to your forked repository
 3. Open pull request to main repository
@@ -94,21 +103,23 @@ Note that the manifest test reads the `MANIFEST.in` file and explicitly specify 
 ### Push Changes to Forked Repo
 
 Your commits should be pushed to the forked repository. To verify this type
+
 ```bash
 git remote -v
 ```
+
 and ensure the remotes point to your GitHub. Don't work on the master branch!
 
 1. Commit changes to local repository:
-    ```bash
-    git checkout -b my-feature
-    git add <updated_files>
-    git commit
-    ```
+   ```bash
+   git checkout -b my-feature
+   git add <updated_files>
+   git commit
+   ```
 2. Push changes to your remote repository:
-    ```bash
-    git push -u origin my-feature
-    ```
+   ```bash
+   git push -u origin my-feature
+   ```
 
 ### Create Pull Request
 
@@ -117,10 +128,11 @@ Follow [these](https://help.github.com/articles/creating-a-pull-request-from-a-f
 There are good references to the [Git documentation](https://git-scm.com/doc) and [Git workflows](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) for more information if any of this is unfamiliar.
 
 _Note: You might want to set a reference to the main repository to fetch/merge from there instead of your forked repository. You can do that using:_
+
 ```bash
 git remote add upstream https://github.com/nteract/testbook
 ```
 
-It's possible you will have conflicts between your repository and master. Here, `master` is meant to be synchronized with the ```upstream``` repository.  GitHub has some good [documentation](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/) on merging pull requests from the command line.
+It's possible you will have conflicts between your repository and master. Here, `master` is meant to be synchronized with the `upstream` repository. GitHub has some good [documentation](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/) on merging pull requests from the command line.
 
 Happy hacking on TestBook!

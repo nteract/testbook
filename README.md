@@ -33,50 +33,10 @@ def test_notebook():
         assert notebook.cell_output_text('cell-tag') == 'hello world'
 ```
 
-## Features
+## Documentation
 
-- **Pre-run cells before test execution**
+See [readthedocs](https://test-book.readthedocs.io/en/latest/) for more in-depth details.
 
-```python
-@testbook.notebook_loader('/path/to/notebook.ipynb', prerun=['cell1', 'cell2'])
-def test_notebook_with_prerun(notebook):
-    assert notebook.cell_output_text('cell3') == 'hello world'
-```
+## Development Guide
 
-**Note:** `cell1`, `cell2` and `cell3` are Jupyter Notebook cell tags.
-
-### **Share kernel context across multiple tests**
-
-```python
-notebook_context = testbook.notebook_loader('notebook.ipynb', prerun=['tag1', 'tag2', 'tag3'])
-
-def test_notebook():
-    with notebook_context() as notebook:
-        assert notebook.cell_output_text('tag4') == 'hello world'
-
-def test_notebook_1():
-    with notebook_context() as notebook:
-        assert notebook.cell_output_text('tag5') == 'hello world'
-```
-
-### **Inject functions**
-
-```python
-def foo(name):
-    print(f"hello {name}")
-
-def test_notebook():
-    with testbook.notebook_loader('notebook.ipynb') as notebook:
-        assert notebook.inject(foo, args=['world']).output_text == 'hello world'
-```
-
-### **Inject code snippets**
-
-```python
-def test_notebook():
-    with testbook.notebook_loader('notebook.ipynb') as notebook:
-        code_snippet = """
-            print('hello world')
-        """
-        assert notebook.inject(code_snippet).output_text == 'hello world'
-```
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to setup a local development environment and make code changes back to TestBook.
