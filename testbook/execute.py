@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 
 import nbformat
-import pytest
 
 from testbook.client import TestbookNotebookClient
 
