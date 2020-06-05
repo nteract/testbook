@@ -10,41 +10,18 @@ from testbook.testbooknode import TestbookNode
 from testbook.exceptions import CellTagNotFoundError
 
 
-class notebook_object:
-    def __init__(self, client, name):
-        self.client = client
-        self.name = name
-
-    def __call__(self, *args):
-        args_str = ', '.join(map(json.dumps, args)) if args else ''
-        cell = self.client.inject(
-            f"""
-            {self.name}({args_str})
-        """
-        )
-        return get_execute_result(cell.outputs)
-
-
-def get_execute_result(outputs):
-    text = ''
-    for output in outputs:
-        if output.output_type == "execute_result":
-            text += output.data.get("text/plain", "")
-
-    return eval(text)
-
-
 class TestbookNotebookClient(NotebookClient):
-    def get_object(self, name):
-        return notebook_object(self, name)
+    @staticmethod
+    def _get_execute_result(outputs):
+        text = ''
+        for output in outputs:
+            if output.output_type == "execute_result":
+                text += output.data.get("text/plain", "")
 
-    def get_var(self, name):
-        cell = self.inject(
-            f"""
-            {name}
-        """
-        )
-        return get_execute_result(cell.outputs)
+        try:
+            return eval(text)
+        except:
+            return text
 
     def _get_cell_index(self, tag):
         """Get cell index from the cell tag
@@ -154,3 +131,21 @@ class TestbookNotebookClient(NotebookClient):
         cell = TestbookNode(self.execute_cell(len(self.nb.cells) - 1))
 
         return cell
+
+    def get_function(self, name):
+        def wrapper(*args, **kwargs):
+            args_str = ', '.join(map(json.dumps, args)) if args else ''
+            kwargs_str = json.dumps(kwargs) if kwargs else ''
+
+            src_code = f"""{name}({args_str})"""
+            if kwargs_str:
+                src_code = f"""{name}({args_str}, {kwargs_str})"""
+
+            cell = self.inject(src_code)
+            return self._get_execute_result(cell.outputs)
+
+        return wrapper
+
+    def get_variable(self, name):
+        cell = self.inject(f"{name}")
+        return self._get_execute_result(cell.outputs)
