@@ -13,13 +13,11 @@ class notebook_loader:
         with open(self.nb_path) as f:
             nb = nbformat.read(f, as_version=4)
 
-        client = TestbookNotebookClient(nb)
+        self.client = TestbookNotebookClient(nb)
 
         if self.prerun is not None:
-            with client.setup_kernel():
-                client.execute_cell(self.prerun)
-
-        self.client = client
+            with self.client.setup_kernel():
+                self.client.execute_cell(self.prerun)
 
     def _start_kernel(self):
         if self.client.km is None:
