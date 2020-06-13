@@ -15,10 +15,6 @@ class notebook_loader:
 
         self.client = TestbookNotebookClient(nb)
 
-        if self.prerun is not None:
-            with self.client.setup_kernel():
-                self.client.execute_cell(self.prerun)
-
     def _start_kernel(self):
         if self.client.km is None:
             self.client.start_kernel_manager()
@@ -28,6 +24,8 @@ class notebook_loader:
 
     def __enter__(self):
         self._start_kernel()
+        if self.prerun is not None:
+            self.client.execute_cell(self.prerun)
         return self.client
 
     def __exit__(self, *args):
@@ -36,6 +34,8 @@ class notebook_loader:
     def __call__(self, func):
         def wrapper(*args, **kwargs):
             with self.client.setup_kernel():
+                if self.prerun is not None:
+                    self.client.execute_cell(self.prerun)
                 func(self.client, *args, **kwargs)
 
         wrapper.__name__ = func.__name__

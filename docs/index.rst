@@ -49,22 +49,6 @@ Features
 **Note:** ``cell1``, ``cell2`` and ``cell3`` are Jupyter Notebook cell tags.
 
 
-- **Share kernel context across multiple tests**
-
-.. code-block:: python
-
-   notebook_context = testbook.notebook_loader('notebook.ipynb', prerun=['tag1', 'tag2', 'tag3'])
-
-
-   def test_notebook():
-      with notebook_context() as notebook:
-         assert notebook.cell_output_text('tag4') == 'hello world'
-
-   def test_notebook_1():
-      with notebook_context() as notebook:
-         assert notebook.cell_output_text('tag5') == 'hello world'
-
-
 - **Inject functions**
 
 .. code-block:: python
