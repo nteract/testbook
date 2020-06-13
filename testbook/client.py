@@ -73,7 +73,7 @@ class TestbookNotebookClient(NotebookClient):
             if 'text' in output:
                 text += output['text']
 
-        return text
+        return text.strip()
 
     def inject(self, code, args=None, prerun=None):
         """Injects given function and executes with arguments passed
