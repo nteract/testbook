@@ -1,17 +1,17 @@
-import inspect
 import json
-import textwrap
 from collections.abc import Callable
-
-from nbformat.v4 import new_code_cell
+from inspect import getsource
+from textwrap import dedent
 
 from nbclient import NotebookClient
-from testbook.testbooknode import TestbookNode
+from nbformat.v4 import new_code_cell
+
 from testbook.exceptions import CellTagNotFoundError
+from testbook.testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
-    def _get_cell_index(self, tag):
+    def _cell_index(self, tag):
         """Get cell index from the cell tag
 
         Arguments:
@@ -40,7 +40,7 @@ class TestbookNotebookClient(NotebookClient):
         cell_indexes = cell
 
         if all(isinstance(x, str) for x in cell):
-            cell_indexes = [self._get_cell_index(tag) for tag in cell]
+            cell_indexes = [self._cell_index(tag) for tag in cell]
 
         executed_cells = []
         for idx in cell_indexes:
@@ -65,8 +65,7 @@ class TestbookNotebookClient(NotebookClient):
         """
         cell_index = cell
         if isinstance(cell, str):
-            # Get cell index of this tag
-            cell_index = self._get_cell_index(cell)
+            cell_index = self._cell_index(cell)
         text = ''
         outputs = self.nb['cells'][cell_index]['outputs']
         for output in outputs:
@@ -76,14 +75,14 @@ class TestbookNotebookClient(NotebookClient):
         return text.strip()
 
     def inject(self, code, args=None, prerun=None):
-        """Injects given function and executes with arguments passed
+        """Injects and executes given code block
 
         Parameters
         ----------
             code :  str or Callable
                 Code or function to be injected
             args : list (optional)
-                list of arguments to be passed to passed function
+                list of arguments to be passed
             prerun : list (optional)
 
         Returns
@@ -91,31 +90,24 @@ class TestbookNotebookClient(NotebookClient):
             cell : TestbookNode
         """
         if isinstance(code, str):
-            lines = textwrap.dedent(code)
+            lines = dedent(code)
         elif isinstance(code, Callable):
-            func = code
-            lines = inspect.getsource(func)
-            args_str = ', '.join(map(json.dumps, args)) if args else ''
-
-            # Add the function call to the same cell
-            lines += textwrap.dedent(
-                f"""
-                # Calling {func.__name__}
-                {func.__name__}({args_str})
-            """
+            lines = getsource(code) + dedent(
+                """
+                # Calling {func_name}
+                {func_name}({args_str})
+                """.format(
+                    func_name=code.__name__,
+                    args_str=', '.join(map(json.dumps, args)) if args else '',
+                )
             )
         else:
             raise TypeError('can only inject function or code block as str')
 
-        # Execute the pre-run cells if passed
         if prerun is not None:
             self.execute_cell(prerun)
 
-        # Create a code cell
-        inject_cell = new_code_cell(lines)
+        self.nb.cells.append(new_code_cell(lines))
+        cell = self.execute_cell(len(self.nb.cells) - 1)
 
-        # Insert it into the in memory notebook object and execute it
-        self.nb.cells.append(inject_cell)
-        cell = TestbookNode(self.execute_cell(len(self.nb.cells) - 1))
-
-        return cell
+        return TestbookNode(cell)
