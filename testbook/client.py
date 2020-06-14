@@ -31,7 +31,7 @@ class TestbookNotebookClient(NotebookClient):
 
         Parameters
         ----------
-            cell : int or str
+            cell : int or str or list
                 cell index (or cell tag)
 
         Returns
