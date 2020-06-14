@@ -12,15 +12,8 @@ from testbook.testbooknode import TestbookNode
 
 class TestbookNotebookClient(NotebookClient):
     def _cell_index(self, tag):
-        """Get cell index from the cell tag
+        """Get cell index from the cell tag"""
 
-        Arguments:
-            nb {dict} -- Notebook
-            tag {str} -- tag
-
-        Returns:
-            int -- cell index
-        """
         if isinstance(tag, int):
             return tag
         elif not isinstance(tag, str):
@@ -33,7 +26,19 @@ class TestbookNotebookClient(NotebookClient):
 
         raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
-    def execute_cell(self, cell, execution_count=None, store_history=True):
+    def execute_cell(self, cell, **kwargs):
+        """Executes a cell or list of cells
+
+        Parameters
+        ----------
+            cell : int or str or list
+                cell index (or cell tag)
+
+        Returns
+        -------
+            executed_cells : dict or list
+        """
+
         if not isinstance(cell, list):
             cell = [cell]
 
@@ -44,12 +49,7 @@ class TestbookNotebookClient(NotebookClient):
 
         executed_cells = []
         for idx in cell_indexes:
-            cell = super().execute_cell(
-                self.nb['cells'][idx],
-                idx,
-                execution_count=execution_count,
-                store_history=store_history,
-            )
+            cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -57,12 +57,16 @@ class TestbookNotebookClient(NotebookClient):
     def cell_output_text(self, cell):
         """Return cell text output
 
-        Arguments:
-            cell {int} -- cell index in notebook
+        Parameters
+        ----------
+            cell : int or str
+                cell index (or cell tag)
 
-        Returns:
-            str -- Text output
+        Returns
+        -------
+            text : str
         """
+
         cell_index = cell
         if isinstance(cell, str):
             cell_index = self._cell_index(cell)
@@ -81,14 +85,15 @@ class TestbookNotebookClient(NotebookClient):
         ----------
             code :  str or Callable
                 Code or function to be injected
-            args : list (optional)
-                list of arguments to be passed
+            args : tuple (optional)
+                tuple of arguments to be passed to the function
             prerun : list (optional)
-
+                list of cells to be pre-run prior to injection
         Returns
         -------
             cell : TestbookNode
         """
+
         if isinstance(code, str):
             lines = dedent(code)
         elif isinstance(code, Callable):
