@@ -1,11 +1,9 @@
-from contextlib import contextmanager
-
 import nbformat
 
 from testbook.client import TestbookNotebookClient
 
 
-class notebook_loader:
+class testbook:
     def __init__(self, nb_path, prerun=None):
         self.nb_path = nb_path
         self.prerun = prerun

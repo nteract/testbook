@@ -16,18 +16,18 @@ Here is an example of a unit test written using testbook:
 
 .. code-block:: python
 
-   @testbook.notebook_loader('/path/to/notebook.ipynb')
+   @testbook.testbook('/path/to/notebook.ipynb')
    def test_notebook(notebook):
        notebook.execute_cell('cell-tag')
        assert notebook.cell_output_text('cell-tag') == 'hello world'
 
-The above snippet demonstrates ``notebook_loader`` used in a decorator pattern, it can also 
+The above snippet demonstrates ``testbook`` used in a decorator pattern, it can also 
 be used in the context manager style as follows:
 
 .. code-block:: python
 
    def test_notebook():
-       with testbook.notebook_loader('/path/to/notebook.ipynb') as notebook:
+       with testbook.testbook('/path/to/notebook.ipynb') as notebook:
            notebook.execute_cell('cell-tag')
            assert notebook.cell_output_text('cell-tag') == 'hello world'
 
@@ -42,7 +42,7 @@ Features
 
 .. code-block:: python
 
-   @testbook.notebook_loader('/path/to/notebook.ipynb', prerun=['cell1', 'cell2'])
+   @testbook.testbook('/path/to/notebook.ipynb', prerun=['cell1', 'cell2'])
    def test_notebook_with_prerun(notebook):
       assert notebook.cell_output_text('cell3') == 'hello world'
 
@@ -57,7 +57,7 @@ Features
       print(f"hello {name}")
 
    def test_notebook():
-      with testbook.notebook_loader('notebook.ipynb') as notebook:
+      with testbook.testbook('notebook.ipynb') as notebook:
           assert notebook.inject(foo, args=['world']).output_text == 'hello world'
 
 
@@ -66,7 +66,7 @@ Features
 .. code-block:: python
 
    def test_notebook():
-      with testbook.notebook_loader('notebook.ipynb') as notebook:
+      with testbook.testbook('notebook.ipynb') as notebook:
           code_snippet = """
               print('hello world')
           """
