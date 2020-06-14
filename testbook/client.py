@@ -12,16 +12,13 @@ from testbook.exceptions import CellTagNotFoundError
 
 class TestbookNotebookClient(NotebookClient):
     @staticmethod
-    def _get_execute_result(outputs):
-        text = ''
-        for output in outputs:
-            if output.output_type == "execute_result":
-                text += output.data.get("text/plain", "")
+    def _execute_result(outputs):
+        """Return data from execute_result outputs"""
 
-        try:
-            return eval(text)
-        except:
-            return text
+        if outputs is None:
+            return
+
+        return [output["data"] for output in outputs if output.output_type == 'execute_result']
 
     def _get_cell_index(self, tag):
         """Get cell index from the cell tag"""
@@ -127,26 +124,16 @@ class TestbookNotebookClient(NotebookClient):
         # Create a code cell
         inject_cell = new_code_cell(lines)
 
-        # Insert it into the in memory notebook object and execute it
-        self.nb.cells.append(inject_cell)
-        cell = TestbookNode(self.execute_cell(len(self.nb.cells) - 1))
+    def value(self, name):
+        """Extract a JSON-able variable value from notebook kernel"""
 
-        return cell
+        result = self.inject(name)
+        if not self._execute_result(result.outputs):
+            raise ValueError('code provided does not produce execute_result')
 
-    def get_function(self, name):
-        def wrapper(*args, **kwargs):
-            args_str = ', '.join(map(json.dumps, args)) if args else ''
-            kwargs_str = json.dumps(kwargs) if kwargs else ''
-
-            src_code = f"""{name}({args_str})"""
-            if kwargs_str:
-                src_code = f"""{name}({args_str}, {kwargs_str})"""
-
-            cell = self.inject(src_code)
-            return self._get_execute_result(cell.outputs)
-
-        return wrapper
-
-    def get_variable(self, name):
-        cell = self.inject(f"{name}")
-        return self._get_execute_result(cell.outputs)
+        code = """
+        from IPython.display import JSON
+        JSON({"value" : _})
+        """
+        cell = self.inject(code)
+        return cell.outputs[0].data['application/json']['value']
