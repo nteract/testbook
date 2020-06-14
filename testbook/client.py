@@ -13,6 +13,7 @@ from testbook.exceptions import CellTagNotFoundError
 class TestbookNotebookClient(NotebookClient):
     def _get_cell_index(self, tag):
         """Get cell index from the cell tag"""
+
         if isinstance(tag, int):
             return tag
         elif not isinstance(tag, str):
@@ -37,6 +38,7 @@ class TestbookNotebookClient(NotebookClient):
         -------
             executed_cells : dict or list
         """
+
         if not isinstance(cell, list):
             cell = [cell]
 
@@ -64,6 +66,7 @@ class TestbookNotebookClient(NotebookClient):
         -------
             text : str
         """
+
         cell_index = cell
         if isinstance(cell, str):
             # Get cell index of cell tag
@@ -91,6 +94,7 @@ class TestbookNotebookClient(NotebookClient):
         -------
             cell : TestbookNode
         """
+
         if isinstance(code, str):
             lines = textwrap.dedent(code)
         elif isinstance(code, Callable):
