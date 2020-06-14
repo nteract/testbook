@@ -40,7 +40,7 @@ class TestbookNotebookClient(NotebookClient):
 
         Parameters
         ----------
-            cell : int or str
+            cell : int or str or list
                 cell index (or cell tag)
 
         Returns
@@ -94,8 +94,8 @@ class TestbookNotebookClient(NotebookClient):
         ----------
             code :  str or Callable
                 Code or function to be injected
-            args : list (optional)
-                list of arguments to be passed
+            args : tuple (optional)
+                tuple of arguments to be passed to the function
             prerun : list (optional)
                 list of cells to be pre-run prior to injection
         Returns
