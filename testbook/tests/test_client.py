@@ -38,7 +38,7 @@ def test_value(cell_tag, var_name, expected_result):
 
 
 @pytest.mark.parametrize(
-    "cell_tag, code", [('int', 'sample_int *= 2'), ('int', 'print(sample_int)'),],
+    "cell_tag, code", [('int', 'sample_int *= 2'), ('int', 'print(sample_int)')],
 )
 def test_value_raises_error(cell_tag, code):
     with testbook('testbook/tests/resources/inject.ipynb', prerun=cell_tag) as notebook:
