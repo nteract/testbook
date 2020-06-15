@@ -16,9 +16,8 @@ Here is an example of a unit test written using testbook:
 
 .. code-block:: python
 
-   @testbook.testbook('/path/to/notebook.ipynb')
+   @testbook.testbook('/path/to/notebook.ipynb', prerun='cell-tag')
    def test_notebook(notebook):
-       notebook.execute_cell('cell-tag')
        assert notebook.cell_output_text('cell-tag') == 'hello world'
 
 The above snippet demonstrates ``testbook`` used in a decorator pattern, it can also 
@@ -27,8 +26,7 @@ be used in the context manager style as follows:
 .. code-block:: python
 
    def test_notebook():
-       with testbook.testbook('/path/to/notebook.ipynb') as notebook:
-           notebook.execute_cell('cell-tag')
+       with testbook.testbook('/path/to/notebook.ipynb', prerun='cell-tag') as notebook:
            assert notebook.cell_output_text('cell-tag') == 'hello world'
 
 
