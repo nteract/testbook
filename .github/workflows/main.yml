@@ -9,17 +9,13 @@ on:
 jobs:
   build-n-test-n-coverage:
     name: Build, test and code coverage
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.6, 3.7, 3.8]
-        exclude:
-          - os: windows-latest
-            python-version: 3.8
     env:
-      OS: ${{ matrix.os }}
+      OS: ubuntu-latest
       PYTHON: "3.8"
 
     steps:
