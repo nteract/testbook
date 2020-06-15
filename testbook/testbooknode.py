@@ -17,6 +17,3 @@ class TestbookNode(NotebookNode):
                 text += output['text']
 
         return text.strip()
-
-    def assert_output_text(self, expected_text):
-        assert self.output_text == expected_text.strip()

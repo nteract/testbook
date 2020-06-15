@@ -15,7 +15,7 @@ class TestbookNotebookClient(NotebookClient):
     def _execute_result(outputs):
         """Return data from execute_result outputs"""
 
-        if outputs is None:
+        if not outputs:
             return
 
         return [output["data"] for output in outputs if output.output_type == 'execute_result']
