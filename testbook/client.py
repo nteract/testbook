@@ -11,6 +11,15 @@ from testbook.testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
+    @staticmethod
+    def _execute_result(outputs):
+        """Return data from execute_result outputs"""
+
+        if outputs is None:
+            return
+
+        return [output["data"] for output in outputs if output.output_type == 'execute_result']
+
     def _cell_index(self, tag):
         """Get cell index from the cell tag"""
 
@@ -116,3 +125,17 @@ class TestbookNotebookClient(NotebookClient):
         cell = self.execute_cell(len(self.nb.cells) - 1)
 
         return TestbookNode(cell)
+
+    def value(self, name):
+        """Extract a JSON-able variable value from notebook kernel"""
+
+        result = self.inject(name)
+        if not self._execute_result(result.outputs):
+            raise ValueError('code provided does not produce execute_result')
+
+        code = """
+        from IPython.display import JSON
+        JSON({"value" : _})
+        """
+        cell = self.inject(code)
+        return cell.outputs[0].data['application/json']['value']
