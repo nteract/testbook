@@ -1,7 +1,7 @@
 import pytest
 
-from testbook import testbook
-from testbook.exceptions import CellTagNotFoundError
+from ..testbook import testbook
+from ..exceptions import CellTagNotFoundError
 
 
 @pytest.mark.parametrize("cell_index_args, expected_result", [(2, 2), ('hello', 1)])

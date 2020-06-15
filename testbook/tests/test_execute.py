@@ -1,4 +1,4 @@
-from testbook import testbook
+from ..testbook import testbook
 
 
 def test_execute_cell():
