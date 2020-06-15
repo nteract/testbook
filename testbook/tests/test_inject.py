@@ -1,6 +1,6 @@
 import pytest
 
-from testbook import testbook
+from ..testbook import testbook
 
 
 def helper_1():
