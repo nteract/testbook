@@ -58,7 +58,11 @@ class TestbookNotebookClient(NotebookClient):
 
         executed_cells = []
         for idx in cell_indexes:
-            cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+            try:
+                cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+            except Exception as e:
+                raise TestbookError(str(e)) from None
+
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -128,12 +132,10 @@ class TestbookNotebookClient(NotebookClient):
 
     def value(self, name):
         """Extract a JSON-able variable value from notebook kernel"""
-        try:
-            result = self.inject(name)
-            if not self._execute_result(result.outputs):
-                raise Exception('code provided does not produce execute_result')
-        except Exception as e:
-            raise TestbookError(str(e)) from None
+
+        result = self.inject(name)
+        if not self._execute_result(result.outputs):
+            raise TestbookError('code provided does not produce execute_result')
 
         code = """
         from IPython.display import JSON

@@ -1,31 +1,31 @@
+import pytest
+
 from ..testbook import testbook
+from ..exceptions import TestbookError
 
 
-def test_execute_cell():
-    with testbook('testbook/tests/resources/foo.ipynb') as notebook:
-        notebook.execute_cell(1)
-        assert notebook.cell_output_text(1) == 'hello world\n[1, 2, 3]'
+@testbook('testbook/tests/resources/foo.ipynb')
+def test_execute_cell(notebook):
+    notebook.execute_cell(1)
+    assert notebook.cell_output_text(1) == 'hello world\n[1, 2, 3]'
 
-        notebook.execute_cell([2, 3])
-        assert notebook.cell_output_text(3) == 'foo'
-
-
-def test_execute_cell_tags():
-    with testbook('testbook/tests/resources/foo.ipynb') as notebook:
-        notebook.execute_cell('test1')
-        assert notebook.cell_output_text('test1') == 'hello world\n[1, 2, 3]'
-
-        notebook.execute_cell(['prepare_foo', 'execute_foo'])
-        assert notebook.cell_output_text('execute_foo') == 'foo'
+    notebook.execute_cell([2, 3])
+    assert notebook.cell_output_text(3) == 'foo'
 
 
-@testbook("testbook/tests/resources/foo.ipynb")
-def test_testbook(notebook):
+@testbook('testbook/tests/resources/foo.ipynb')
+def test_execute_cell_tags(notebook):
     notebook.execute_cell('test1')
     assert notebook.cell_output_text('test1') == 'hello world\n[1, 2, 3]'
 
     notebook.execute_cell(['prepare_foo', 'execute_foo'])
     assert notebook.cell_output_text('execute_foo') == 'foo'
+
+
+@testbook('testbook/tests/resources/foo.ipynb')
+def test_execute_cell_raises_error(notebook):
+    with pytest.raises(TestbookError):
+        notebook.execute_cell('error_cell')
 
 
 @testbook("testbook/tests/resources/foo.ipynb", prerun='prepare_foo')
