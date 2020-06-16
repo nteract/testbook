@@ -1,7 +1,7 @@
 import pytest
 
 from ..testbook import testbook
-from ..exceptions import CellTagNotFoundError
+from ..exceptions import TestbookCellTagNotFoundError, TestbookError
 
 
 @pytest.mark.parametrize("cell_index_args, expected_result", [(2, 2), ('hello', 1)])
@@ -12,7 +12,7 @@ def test_cell_index(cell_index_args, expected_result):
 
 @pytest.mark.parametrize(
     "cell_index_args, expected_error",
-    [([1, 2, 3], TypeError), ('non-existent-tag', CellTagNotFoundError)],
+    [([1, 2, 3], TypeError), ('non-existent-tag', TestbookCellTagNotFoundError)],
 )
 def test_cell_index_raises_error(cell_index_args, expected_error):
     with testbook('testbook/tests/resources/inject.ipynb') as notebook:
@@ -42,5 +42,5 @@ def test_value(cell_tag, var_name, expected_result):
 )
 def test_value_raises_error(cell_tag, code):
     with testbook('testbook/tests/resources/inject.ipynb', prerun=cell_tag) as notebook:
-        with pytest.raises(ValueError):
+        with pytest.raises(TestbookError):
             notebook.value(code)

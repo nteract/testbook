@@ -6,7 +6,7 @@ from textwrap import dedent
 from nbclient import NotebookClient
 from nbformat.v4 import new_code_cell
 
-from testbook.exceptions import CellTagNotFoundError
+from testbook.exceptions import TestbookError, TestbookCellTagNotFoundError
 from testbook.testbooknode import TestbookNode
 
 
@@ -33,7 +33,7 @@ class TestbookNotebookClient(NotebookClient):
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
 
-        raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
+        raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
     def execute_cell(self, cell, **kwargs):
         """Executes a cell or list of cells
@@ -128,10 +128,12 @@ class TestbookNotebookClient(NotebookClient):
 
     def value(self, name):
         """Extract a JSON-able variable value from notebook kernel"""
-
-        result = self.inject(name)
-        if not self._execute_result(result.outputs):
-            raise ValueError('code provided does not produce execute_result')
+        try:
+            result = self.inject(name)
+            if not self._execute_result(result.outputs):
+                raise Exception('code provided does not produce execute_result')
+        except Exception as e:
+            raise TestbookError(str(e)) from None
 
         code = """
         from IPython.display import JSON
