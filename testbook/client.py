@@ -12,6 +12,13 @@ from .testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
+    def __init__(self, nb, km=None, **kw):
+        super().__init__(nb, km=km, **kw)
+
+    @property
+    def cells(self):
+        return self.nb.cells
+
     @staticmethod
     def _execute_result(outputs):
         """Return data from execute_result outputs"""
@@ -123,18 +130,20 @@ class TestbookNotebookClient(NotebookClient):
         else:
             raise TypeError('can only inject function or code block as str')
 
-        if kwargs.get("after") and kwargs.get("before"):
+        inject_idx = len(self.cells)
+
+        if kwargs.get("after") is not None and kwargs.get("before") is not None:
             raise TypeError("pass either before or after as kwargs")
+        elif kwargs.get("before"):
+            inject_idx = self._cell_index(kwargs.get("before"))
+        elif kwargs.get("after"):
+            inject_idx = self._cell_index(kwargs.get("after")) + 1
 
-        inject_pos = len(self.nb.cells)
+        if prerun is not None:
+            self.execute_cell(prerun)
 
-        if kwargs.get("before") is not None:
-            inject_pos = self._get_cell_index(kwargs["after"])
-        elif kwargs.get("after") is not None:
-            inject_pos = self._get_cell_index(kwargs["before"])
-
-        self.nb.cells.insert(inject_pos, new_code_cell(lines))
-        cell = self.execute_cell(inject_pos - 1)
+        self.cells.insert(inject_idx, new_code_cell(lines))
+        cell = self.execute_cell(inject_idx)
 
         return TestbookNode(cell)
 

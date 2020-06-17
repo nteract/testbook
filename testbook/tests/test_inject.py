@@ -101,9 +101,9 @@ def test_inject_with_prerun(prerun, code_block, expected_text):
 
 
 def test_inject_before_after():
-    with notebook_loader('testbook/tests/resources/inject.ipynb') as notebook:
-        code_block = '''
-            say_hello()
-            say_bye()
-            '''
-        assert notebook.inject()
+    with testbook('testbook/tests/resources/inject.ipynb', prerun=['hello', 'bye']) as notebook:
+        notebook.inject("say_hello()", after="hello")
+        assert notebook.cells[notebook._cell_index("hello") + 1].source == "say_hello()"
+
+        notebook.inject("say_bye()", before="hello")
+        assert notebook.cells[notebook._cell_index("hello") - 1].source == "say_bye()"
