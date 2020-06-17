@@ -107,3 +107,6 @@ def test_inject_before_after():
 
         notebook.inject("say_bye()", before="hello")
         assert notebook.cells[notebook._cell_index("hello") - 1].source == "say_bye()"
+
+        with pytest.raises(TypeError):
+            notebook.inject("say_hello()", before="hello", after="bye")
