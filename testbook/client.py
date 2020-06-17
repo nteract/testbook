@@ -4,10 +4,11 @@ from inspect import getsource
 from textwrap import dedent
 
 from nbclient import NotebookClient
+from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from testbook.exceptions import CellTagNotFoundError
-from testbook.testbooknode import TestbookNode
+from .exceptions import TestbookCellTagNotFoundError, TestbookError
+from .testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -33,7 +34,7 @@ class TestbookNotebookClient(NotebookClient):
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
 
-        raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
+        raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
     def execute_cell(self, cell, **kwargs):
         """Executes a cell or list of cells
@@ -58,7 +59,11 @@ class TestbookNotebookClient(NotebookClient):
 
         executed_cells = []
         for idx in cell_indexes:
-            cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+            try:
+                cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+            except CellExecutionError as e:
+                raise TestbookError(str(e)) from None
+
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -131,7 +136,7 @@ class TestbookNotebookClient(NotebookClient):
 
         result = self.inject(name)
         if not self._execute_result(result.outputs):
-            raise ValueError('code provided does not produce execute_result')
+            raise TestbookError('code provided does not produce execute_result')
 
         code = """
         from IPython.display import JSON
