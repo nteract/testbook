@@ -4,10 +4,11 @@ from inspect import getsource
 from textwrap import dedent
 
 from nbclient import NotebookClient
+from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from testbook.exceptions import TestbookError, TestbookCellTagNotFoundError
-from testbook.testbooknode import TestbookNode
+from .exceptions import TestbookCellTagNotFoundError, TestbookError
+from .testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -60,7 +61,7 @@ class TestbookNotebookClient(NotebookClient):
         for idx in cell_indexes:
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
-            except Exception as e:
+            except CellExecutionError as e:
                 raise TestbookError(str(e)) from None
 
             executed_cells.append(cell)

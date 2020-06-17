@@ -1,6 +1,6 @@
 import nbformat
 
-from testbook.client import TestbookNotebookClient
+from .client import TestbookNotebookClient
 
 
 class testbook:
