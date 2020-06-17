@@ -1,6 +1,6 @@
 import pytest
 
-from testbook import notebook_loader
+from ..testbook import testbook
 
 
 def helper_1():
@@ -27,7 +27,7 @@ def helper_2(arg1, arg2):
 )
 def test_inject(helper_func, args, expected_text):
 
-    with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
+    with testbook('testbook/tests/resources/foo.ipynb') as notebook:
         assert notebook.inject(helper_func, args).output_text == expected_text
 
 
@@ -53,12 +53,12 @@ def test_inject(helper_func, args, expected_text):
     ],
 )
 def test_inject_code_block(code_block, expected_text):
-    with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
+    with testbook('testbook/tests/resources/foo.ipynb') as notebook:
         assert notebook.inject(code_block).output_text == expected_text
 
 
 def test_inject_raises_exception():
-    with notebook_loader('testbook/tests/resources/foo.ipynb') as notebook:
+    with testbook('testbook/tests/resources/foo.ipynb') as notebook:
 
         values = [3, {'key': 'value'}, ['a', 'b', 'c'], (1, 2, 3), {1, 2, 3}]
 
@@ -96,7 +96,7 @@ def test_inject_raises_exception():
     ],
 )
 def test_inject_with_prerun(prerun, code_block, expected_text):
-    with notebook_loader('testbook/tests/resources/inject.ipynb') as notebook:
+    with testbook('testbook/tests/resources/inject.ipynb') as notebook:
         assert notebook.inject(code_block, prerun=prerun).output_text == expected_text
 
 

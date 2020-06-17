@@ -1,26 +1,29 @@
-import inspect
 import json
-import textwrap
 from collections.abc import Callable
-
-from nbformat.v4 import new_code_cell
+from inspect import getsource
+from textwrap import dedent
 
 from nbclient import NotebookClient
-from testbook.testbooknode import TestbookNode
-from testbook.exceptions import CellTagNotFoundError
+from nbclient.exceptions import CellExecutionError
+from nbformat.v4 import new_code_cell
+
+from .exceptions import TestbookCellTagNotFoundError, TestbookError
+from .testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
-    def _get_cell_index(self, tag):
-        """Get cell index from the cell tag
+    @staticmethod
+    def _execute_result(outputs):
+        """Return data from execute_result outputs"""
 
-        Arguments:
-            nb {dict} -- Notebook
-            tag {str} -- tag
+        if not outputs:
+            return
 
-        Returns:
-            int -- cell index
-        """
+        return [output["data"] for output in outputs if output.output_type == 'execute_result']
+
+    def _cell_index(self, tag):
+        """Get cell index from the cell tag"""
+
         if isinstance(tag, int):
             return tag
         elif not isinstance(tag, str):
@@ -31,25 +34,36 @@ class TestbookNotebookClient(NotebookClient):
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
 
-        raise CellTagNotFoundError("Cell tag '{}' not found".format(tag))
+        raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
-    def execute_cell(self, cell, execution_count=None, store_history=True):
+    def execute_cell(self, cell, **kwargs):
+        """Executes a cell or list of cells
+
+        Parameters
+        ----------
+            cell : int or str or list
+                cell index (or cell tag)
+
+        Returns
+        -------
+            executed_cells : dict or list
+        """
+
         if not isinstance(cell, list):
             cell = [cell]
 
         cell_indexes = cell
 
         if all(isinstance(x, str) for x in cell):
-            cell_indexes = [self._get_cell_index(tag) for tag in cell]
+            cell_indexes = [self._cell_index(tag) for tag in cell]
 
         executed_cells = []
         for idx in cell_indexes:
-            cell = super().execute_cell(
-                self.nb['cells'][idx],
-                idx,
-                execution_count=execution_count,
-                store_history=store_history,
-            )
+            try:
+                cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+            except CellExecutionError as e:
+                raise TestbookError(str(e)) from None
+
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -57,57 +71,57 @@ class TestbookNotebookClient(NotebookClient):
     def cell_output_text(self, cell):
         """Return cell text output
 
-        Arguments:
-            cell {int} -- cell index in notebook
+        Parameters
+        ----------
+            cell : int or str
+                cell index (or cell tag)
 
-        Returns:
-            str -- Text output
+        Returns
+        -------
+            text : str
         """
+
         cell_index = cell
         if isinstance(cell, str):
-            # Get cell index of this tag
-            cell_index = self._get_cell_index(cell)
+            cell_index = self._cell_index(cell)
         text = ''
         outputs = self.nb['cells'][cell_index]['outputs']
         for output in outputs:
             if 'text' in output:
                 text += output['text']
 
-        return text
+        return text.strip()
 
-    def inject(self, func, args=None, **kwargs):
-        """Injects given function and executes with arguments passed
+    def inject(self, code, args=None, prerun=None, **kwargs):
+        """Injects and executes given code block
 
-        Arguments:
-            func {__func__} -- function name
-            args {list} -- list of arguments to be passed
-            prerun -- cell(s) to be executed before injection
-
-        Returns:
-            TestbookNode -- dict containing function and function call along with outputs
+        Parameters
+        ----------
+            code :  str or Callable
+                Code or function to be injected
+            args : tuple (optional)
+                tuple of arguments to be passed to the function
+            prerun : list (optional)
+                list of cells to be pre-run prior to injection
+        Returns
+        -------
+            cell : TestbookNode
         """
-        if isinstance(func, str):
-            lines = textwrap.dedent(func)
-        elif isinstance(func, Callable):
-            lines = inspect.getsource(func)
-            args_str = ', '.join(map(json.dumps, args)) if args else ''
 
-            # Add the function call to the same cell
-            lines += textwrap.dedent(
-                f"""
-                # Calling {func.__name__}
-                {func.__name__}({args_str})
-            """
+        if isinstance(code, str):
+            lines = dedent(code)
+        elif isinstance(code, Callable):
+            lines = getsource(code) + dedent(
+                """
+                # Calling {func_name}
+                {func_name}({args_str})
+                """.format(
+                    func_name=code.__name__,
+                    args_str=', '.join(map(json.dumps, args)) if args else '',
+                )
             )
         else:
             raise TypeError('can only inject function or code block as str')
-
-        # Execute the pre-run cells if passed
-        if kwargs.get("prerun") is not None:
-            self.execute_cell(kwargs["prerun"])
-
-        # Create a code cell
-        inject_cell = new_code_cell(lines)
 
         if kwargs.get("after") and kwargs.get("before"):
             raise TypeError("pass either before or after as kwargs")
@@ -119,8 +133,21 @@ class TestbookNotebookClient(NotebookClient):
         elif kwargs.get("after") is not None:
             inject_pos = self._get_cell_index(kwargs["before"])
 
-        # Insert it into the in memory notebook object and execute it
-        self.nb.cells.insert(inject_pos, inject_cell)
-        cell = self.execute_cell(inject_pos)
+        self.nb.cells.insert(inject_pos, new_code_cell(lines))
+        cell = self.execute_cell(inject_pos - 1)
 
         return TestbookNode(cell)
+
+    def value(self, name):
+        """Extract a JSON-able variable value from notebook kernel"""
+
+        result = self.inject(name)
+        if not self._execute_result(result.outputs):
+            raise TestbookError('code provided does not produce execute_result')
+
+        code = """
+        from IPython.display import JSON
+        JSON({"value" : _})
+        """
+        cell = self.inject(code)
+        return cell.outputs[0].data['application/json']['value']

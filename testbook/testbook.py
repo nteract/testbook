@@ -1,12 +1,9 @@
-from contextlib import contextmanager
-
 import nbformat
-import pytest
 
-from testbook.client import TestbookNotebookClient
+from .client import TestbookNotebookClient
 
 
-class notebook_loader:
+class testbook:
     def __init__(self, nb_path, prerun=None):
         self.nb_path = nb_path
         self.prerun = prerun
@@ -14,13 +11,7 @@ class notebook_loader:
         with open(self.nb_path) as f:
             nb = nbformat.read(f, as_version=4)
 
-        client = TestbookNotebookClient(nb)
-
-        if self.prerun is not None:
-            with client.setup_kernel():
-                client.execute_cell(self.prerun)
-
-        self.client = client
+        self.client = TestbookNotebookClient(nb)
 
     def _start_kernel(self):
         if self.client.km is None:
@@ -31,6 +22,8 @@ class notebook_loader:
 
     def __enter__(self):
         self._start_kernel()
+        if self.prerun is not None:
+            self.client.execute_cell(self.prerun)
         return self.client
 
     def __exit__(self, *args):
@@ -39,6 +32,8 @@ class notebook_loader:
     def __call__(self, func):
         def wrapper(*args, **kwargs):
             with self.client.setup_kernel():
+                if self.prerun is not None:
+                    self.client.execute_cell(self.prerun)
                 func(self.client, *args, **kwargs)
 
         wrapper.__name__ = func.__name__
