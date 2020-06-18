@@ -12,6 +12,13 @@ from .testbooknode import TestbookNode
 
 
 class TestbookNotebookClient(NotebookClient):
+    def __init__(self, nb, km=None, **kw):
+        super().__init__(nb, km=km, **kw)
+
+    @property
+    def cells(self):
+        return self.nb.cells
+
     @staticmethod
     def _execute_result(outputs):
         """Return data from execute_result outputs"""
@@ -92,7 +99,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text.strip()
 
-    def inject(self, code, args=None, prerun=None):
+    def inject(self, code, args=None, run=False, before=None, after=None):
         """Injects and executes given code block
 
         Parameters
@@ -101,8 +108,13 @@ class TestbookNotebookClient(NotebookClient):
                 Code or function to be injected
             args : tuple (optional)
                 tuple of arguments to be passed to the function
-            prerun : list (optional)
-                list of cells to be pre-run prior to injection
+            run : bool (optional)
+                If True, the code is immediately executed after injection.
+                Defaults to False.
+            before : str or int (optional)
+                Inject code before cell
+            after : str or int (optional)
+                Inject code after cell
         Returns
         -------
             cell : TestbookNode
@@ -123,18 +135,24 @@ class TestbookNotebookClient(NotebookClient):
         else:
             raise TypeError('can only inject function or code block as str')
 
-        if prerun is not None:
-            self.execute_cell(prerun)
+        inject_idx = len(self.cells)
 
-        self.nb.cells.append(new_code_cell(lines))
-        cell = self.execute_cell(len(self.nb.cells) - 1)
+        if after is not None and before is not None:
+            raise ValueError("pass either before or after as kwargs")
+        elif before is not None:
+            inject_idx = self._cell_index(before)
+        elif after is not None:
+            inject_idx = self._cell_index(after) + 1
 
-        return TestbookNode(cell)
+        code_cell = new_code_cell(lines)
+        self.cells.insert(inject_idx, code_cell)
+
+        return TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
 
     def value(self, name):
         """Extract a JSON-able variable value from notebook kernel"""
 
-        result = self.inject(name)
+        result = self.inject(name, run=True)
         if not self._execute_result(result.outputs):
             raise TestbookError('code provided does not produce execute_result')
 
@@ -142,5 +160,5 @@ class TestbookNotebookClient(NotebookClient):
         from IPython.display import JSON
         JSON({"value" : _})
         """
-        cell = self.inject(code)
+        cell = self.inject(code, run=True)
         return cell.outputs[0].data['application/json']['value']

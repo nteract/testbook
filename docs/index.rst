@@ -56,7 +56,7 @@ Features
 
    def test_notebook():
       with testbook.testbook('notebook.ipynb') as notebook:
-          assert notebook.inject(foo, args=['world']).output_text == 'hello world'
+          assert notebook.inject(foo, args=['world'], run=True).output_text == 'hello world'
 
 
 - **Inject code snippets**
@@ -68,4 +68,4 @@ Features
           code_snippet = """
               print('hello world')
           """
-          assert notebook.inject(code_snippet).output_text == 'hello world'
+          assert notebook.inject(code_snippet, run=True).output_text == 'hello world'
