@@ -99,7 +99,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text.strip()
 
-    def inject(self, code, args=None, prerun=None, before=None, after=None):
+    def inject(self, code, args=None, prerun=None, run=False, before=None, after=None):
         """Injects and executes given code block
 
         Parameters
@@ -110,6 +110,9 @@ class TestbookNotebookClient(NotebookClient):
                 tuple of arguments to be passed to the function
             prerun : list (optional)
                 list of cells to be pre-run prior to injection
+            run : bool (optional)
+                If True, the code is immediately executed after injection.
+                Defaults to False.
             before : str or int (optional)
                 Inject code before cell
             after : str or int (optional)
@@ -138,23 +141,23 @@ class TestbookNotebookClient(NotebookClient):
 
         if after is not None and before is not None:
             raise TypeError("pass either before or after as kwargs")
-        elif before:
+        elif before is not None:
             inject_idx = self._cell_index(before)
-        elif after:
+        elif after is not None:
             inject_idx = self._cell_index(after) + 1
 
         if prerun is not None:
             self.execute_cell(prerun)
 
-        self.cells.insert(inject_idx, new_code_cell(lines))
-        cell = self.execute_cell(inject_idx)
+        code_cell = new_code_cell(lines)
+        self.cells.insert(inject_idx, code_cell)
 
-        return TestbookNode(cell)
+        return TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
 
     def value(self, name):
         """Extract a JSON-able variable value from notebook kernel"""
 
-        result = self.inject(name)
+        result = self.inject(name, run=True)
         if not self._execute_result(result.outputs):
             raise TestbookError('code provided does not produce execute_result')
 
@@ -162,5 +165,5 @@ class TestbookNotebookClient(NotebookClient):
         from IPython.display import JSON
         JSON({"value" : _})
         """
-        cell = self.inject(code)
+        cell = self.inject(code, run=True)
         return cell.outputs[0].data['application/json']['value']

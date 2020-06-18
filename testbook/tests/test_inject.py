@@ -28,7 +28,7 @@ def helper_2(arg1, arg2):
 def test_inject(helper_func, args, expected_text):
 
     with testbook('testbook/tests/resources/foo.ipynb') as notebook:
-        assert notebook.inject(helper_func, args).output_text == expected_text
+        assert notebook.inject(helper_func, args, run=True).output_text == expected_text
 
 
 @pytest.mark.parametrize(
@@ -54,7 +54,7 @@ def test_inject(helper_func, args, expected_text):
 )
 def test_inject_code_block(code_block, expected_text):
     with testbook('testbook/tests/resources/foo.ipynb') as notebook:
-        assert notebook.inject(code_block).output_text == expected_text
+        assert notebook.inject(code_block, run=True).output_text == expected_text
 
 
 def test_inject_raises_exception():
@@ -64,7 +64,7 @@ def test_inject_raises_exception():
 
         for value in values:
             with pytest.raises(TypeError):
-                notebook.inject(value)
+                notebook.inject(value, run=True)
 
 
 @pytest.mark.parametrize(
@@ -97,15 +97,15 @@ def test_inject_raises_exception():
 )
 def test_inject_with_prerun(prerun, code_block, expected_text):
     with testbook('testbook/tests/resources/inject.ipynb') as notebook:
-        assert notebook.inject(code_block, prerun=prerun).output_text == expected_text
+        assert notebook.inject(code_block, prerun=prerun, run=True).output_text == expected_text
 
 
 def test_inject_before_after():
     with testbook('testbook/tests/resources/inject.ipynb', prerun=['hello', 'bye']) as notebook:
-        notebook.inject("say_hello()", after="hello")
+        notebook.inject("say_hello()", run=True, after="hello")
         assert notebook.cells[notebook._cell_index("hello") + 1].source == "say_hello()"
 
-        notebook.inject("say_bye()", before="hello")
+        notebook.inject("say_bye()", run=True, before="hello")
         assert notebook.cells[notebook._cell_index("hello") - 1].source == "say_bye()"
 
         with pytest.raises(TypeError):
