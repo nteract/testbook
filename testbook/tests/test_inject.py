@@ -67,39 +67,6 @@ def test_inject_raises_exception():
                 notebook.inject(value, run=True)
 
 
-@pytest.mark.parametrize(
-    "prerun, code_block, expected_text",
-    [
-        (
-            0,
-            '''
-            print(f"{foo} {bar}")
-            ''',
-            "Hello World",
-        ),
-        (
-            [1, 2],
-            '''
-            say_hello()
-            say_bye()
-            ''',
-            "Hello there\nBye",
-        ),
-        (
-            ['hello', 'bye'],
-            '''
-            say_hello()
-            say_bye()
-            ''',
-            "Hello there\nBye",
-        ),
-    ],
-)
-def test_inject_with_prerun(prerun, code_block, expected_text):
-    with testbook('testbook/tests/resources/inject.ipynb') as notebook:
-        assert notebook.inject(code_block, prerun=prerun, run=True).output_text == expected_text
-
-
 def test_inject_before_after():
     with testbook('testbook/tests/resources/inject.ipynb', prerun=['hello', 'bye']) as notebook:
         notebook.inject("say_hello()", run=True, after="hello")

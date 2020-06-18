@@ -99,7 +99,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text.strip()
 
-    def inject(self, code, args=None, prerun=None, run=False, before=None, after=None):
+    def inject(self, code, args=None, run=False, before=None, after=None):
         """Injects and executes given code block
 
         Parameters
@@ -108,8 +108,6 @@ class TestbookNotebookClient(NotebookClient):
                 Code or function to be injected
             args : tuple (optional)
                 tuple of arguments to be passed to the function
-            prerun : list (optional)
-                list of cells to be pre-run prior to injection
             run : bool (optional)
                 If True, the code is immediately executed after injection.
                 Defaults to False.
@@ -145,9 +143,6 @@ class TestbookNotebookClient(NotebookClient):
             inject_idx = self._cell_index(before)
         elif after is not None:
             inject_idx = self._cell_index(after) + 1
-
-        if prerun is not None:
-            self.execute_cell(prerun)
 
         code_cell = new_code_cell(lines)
         self.cells.insert(inject_idx, code_cell)
