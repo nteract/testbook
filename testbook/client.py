@@ -99,7 +99,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return text.strip()
 
-    def inject(self, code, args=None, prerun=None, **kwargs):
+    def inject(self, code, args=None, prerun=None, before=None, after=None):
         """Injects and executes given code block
 
         Parameters
@@ -110,6 +110,10 @@ class TestbookNotebookClient(NotebookClient):
                 tuple of arguments to be passed to the function
             prerun : list (optional)
                 list of cells to be pre-run prior to injection
+            before : str or int (optional)
+                Inject code before cell
+            after : str or int (optional)
+                Inject code after cell
         Returns
         -------
             cell : TestbookNode
@@ -132,12 +136,12 @@ class TestbookNotebookClient(NotebookClient):
 
         inject_idx = len(self.cells)
 
-        if kwargs.get("after") is not None and kwargs.get("before") is not None:
+        if after is not None and before is not None:
             raise TypeError("pass either before or after as kwargs")
-        elif kwargs.get("before"):
-            inject_idx = self._cell_index(kwargs.get("before"))
-        elif kwargs.get("after"):
-            inject_idx = self._cell_index(kwargs.get("after")) + 1
+        elif before:
+            inject_idx = self._cell_index(before)
+        elif after:
+            inject_idx = self._cell_index(after) + 1
 
         if prerun is not None:
             self.execute_cell(prerun)
