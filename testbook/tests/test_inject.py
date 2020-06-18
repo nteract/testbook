@@ -69,11 +69,11 @@ def test_inject_raises_exception():
 
 def test_inject_before_after():
     with testbook('testbook/tests/resources/inject.ipynb', prerun=['hello', 'bye']) as notebook:
-        notebook.inject("say_hello()", run=True, after="hello")
+        notebook.inject("say_hello()", after="hello")
         assert notebook.cells[notebook._cell_index("hello") + 1].source == "say_hello()"
 
-        notebook.inject("say_bye()", run=True, before="hello")
+        notebook.inject("say_bye()", before="hello")
         assert notebook.cells[notebook._cell_index("hello") - 1].source == "say_bye()"
 
-        with pytest.raises(TypeError):
+        with pytest.raises(ValueError):
             notebook.inject("say_hello()", before="hello", after="bye")
