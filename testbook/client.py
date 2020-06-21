@@ -1,4 +1,3 @@
-import json
 from inspect import getsource
 from textwrap import dedent
 
