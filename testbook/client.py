@@ -1,5 +1,4 @@
 import json
-from collections.abc import Callable
 from inspect import getsource
 from textwrap import dedent
 
@@ -104,7 +103,7 @@ class TestbookNotebookClient(NotebookClient):
 
         Parameters
         ----------
-            code :  str or Callable
+            code :  str or callable
                 Code or function to be injected
             args : tuple (optional)
                 tuple of arguments to be passed to the function
@@ -122,7 +121,7 @@ class TestbookNotebookClient(NotebookClient):
 
         if isinstance(code, str):
             lines = dedent(code)
-        elif isinstance(code, Callable):
+        elif callable(code):
             lines = getsource(code) + dedent(
                 """
                 # Calling {func_name}
