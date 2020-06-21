@@ -127,8 +127,7 @@ class TestbookNotebookClient(NotebookClient):
                 # Calling {func_name}
                 {func_name}({args_str})
                 """.format(
-                    func_name=code.__name__,
-                    args_str=', '.join(map(json.dumps, args)) if args else '',
+                    func_name=code.__name__, args_str=', '.join(map(repr, args)) if args else '',
                 )
             )
         else:
