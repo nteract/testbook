@@ -4,14 +4,22 @@ from .client import TestbookNotebookClient
 
 
 class testbook:
-    def __init__(self, nb_path, prerun=None):
+    def __init__(self, nb_path, prerun=None, execute=False, timeout=60):
         self.nb_path = nb_path
         self.prerun = prerun
+        self.execute = execute
+        self.timeout = timeout
 
         with open(self.nb_path) as f:
             nb = nbformat.read(f, as_version=4)
 
-        self.client = TestbookNotebookClient(nb)
+        self.client = TestbookNotebookClient(nb, timeout=self.timeout)
+
+    def _prepare(self):
+        if self.execute:
+            self.client.execute()
+        elif self.prerun is not None:
+            self.client.execute_cell(self.prerun)
 
     def _start_kernel(self):
         if self.client.km is None:
@@ -22,8 +30,7 @@ class testbook:
 
     def __enter__(self):
         self._start_kernel()
-        if self.prerun is not None:
-            self.client.execute_cell(self.prerun)
+        self._prepare()
         return self.client
 
     def __exit__(self, *args):
@@ -32,8 +39,7 @@ class testbook:
     def __call__(self, func):
         def wrapper(*args, **kwargs):
             with self.client.setup_kernel():
-                if self.prerun is not None:
-                    self.client.execute_cell(self.prerun)
+                self._prepare()
                 func(self.client, *args, **kwargs)
 
         wrapper.__name__ = func.__name__
