@@ -8,10 +8,8 @@ from nbformat.v4 import new_code_cell
 from .exceptions import TestbookCellTagNotFoundError, TestbookError
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
-from .reference import TestbookCallableReference, TestbookVariableReference
-from .utils import random_varname, _construct_call_code
-
-_testbook_object_cache = dict()
+from .reference import TestbookObjectReference
+from .utils import random_varname
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -19,15 +17,17 @@ class TestbookNotebookClient(NotebookClient):
         super().__init__(nb, km=km, **kw)
 
     def ref(self, name):
-        if name in _testbook_object_cache:
-            return _testbook_object_cache[name]
+        return TestbookObjectReference(self, name)
 
-        if self.value(f"callable({name})"):
-            _testbook_object_cache[name] = TestbookCallableReference(self, name)
-        else:
-            _testbook_object_cache[name] = TestbookVariableReference(self, name)
-
-        return _testbook_object_cache[name]
+    @staticmethod
+    def _construct_call_code(func_name, args=None, kwargs=None):
+        return """
+            {func_name}(*{args_list}, **{kwargs_dict})
+            """.format(
+            func_name=func_name,
+            args_list=PythonTranslator.translate(args) if args else [],
+            kwargs_dict=PythonTranslator.translate(args) if kwargs else {},
+        )
 
     @property
     def cells(self):
@@ -148,7 +148,7 @@ class TestbookNotebookClient(NotebookClient):
             lines = dedent(code)
         elif callable(code):
             lines = getsource(code) + (
-                dedent(_construct_call_code(code.__name__, args, kwargs)) if run else ''
+                dedent(self._construct_call_code(code.__name__, args, kwargs)) if run else ''
             )
         else:
             raise TypeError('can only inject function or code block as str')
@@ -172,7 +172,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return cell
 
-    def value(self, code):
+    def value(self, code, safe=True):
         result = self.inject(code, pop=True)
         if not self._execute_result(result):
             raise TestbookError('code provided does not produce execute_result')
@@ -187,6 +187,9 @@ class TestbookNotebookClient(NotebookClient):
             return outputs[0].data['application/json']['value']
 
         except ValueError:
+            if not safe:
+                raise
+
             varname = random_varname()
             self.inject(
                 f"""
@@ -194,7 +197,7 @@ class TestbookNotebookClient(NotebookClient):
             """,
                 pop=True,
             )
-            return TestbookVariableReference(self, varname)
+            return TestbookObjectReference(self, varname)
 
     def _assert_in_notebook(self, lhs, rhs):
         code = """

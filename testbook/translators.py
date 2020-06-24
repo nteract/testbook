@@ -2,7 +2,7 @@
 import math
 import sys
 
-from .reference import TestbookVariableReference
+from .reference import TestbookObjectReference
 
 
 class Translator(object):
@@ -74,7 +74,7 @@ class Translator(object):
             return cls.translate_list(val)
         elif isinstance(val, tuple):
             return cls.translate_tuple(val)
-        elif isinstance(val, TestbookVariableReference):
+        elif isinstance(val, TestbookObjectReference):
             return val.name
 
         # Use this generic translation as a last resort
