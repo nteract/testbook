@@ -1,7 +1,6 @@
 import pytest
 
 from ..testbook import testbook
-from ..exceptions import TestbookError
 
 
 @testbook('testbook/tests/resources/foo.ipynb')
@@ -24,7 +23,7 @@ def test_execute_cell_tags(notebook):
 
 @testbook('testbook/tests/resources/foo.ipynb')
 def test_execute_cell_raises_error(notebook):
-    with pytest.raises(TestbookError):
+    with pytest.raises(ZeroDivisionError):
         notebook.execute_cell('error_cell')
 
 
