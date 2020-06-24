@@ -9,7 +9,7 @@ def random_varname(length=10):
     return ''.join(random.choice(letters) for _ in range(length))
 
 
-def _construct_call_code(func_name, args, kwargs):
+def _construct_call_code(func_name, args=None, kwargs=None):
     return """
         {func_name}(*{args_list}, **{kwargs_dict})
         """.format(
