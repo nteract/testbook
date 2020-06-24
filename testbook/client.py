@@ -7,6 +7,7 @@ from nbformat.v4 import new_code_cell
 
 from .exceptions import TestbookCellTagNotFoundError, TestbookError
 from .testbooknode import TestbookNode
+from .utils import _construct_call_code
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -127,13 +128,8 @@ class TestbookNotebookClient(NotebookClient):
         if isinstance(code, str):
             lines = dedent(code)
         elif callable(code):
-            lines = getsource(code) + dedent(
-                """
-                # Calling {func_name}
-                {func_name}({args_str})
-                """.format(
-                    func_name=code.__name__, args_str=', '.join(map(repr, args)) if args else '',
-                )
+            lines = getsource(code) + (
+                dedent(_construct_call_code(code.__name__, args)) if run else ''
             )
         else:
             raise TypeError('can only inject function or code block as str')
