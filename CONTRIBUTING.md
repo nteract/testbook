@@ -70,7 +70,7 @@ Alternavitely pytest can be used if you have an environment already setup which 
 pytest
 ```
 
-Now there should be a working and editable installation of Papermill to start making your own contributions.
+Now there should be a working and editable installation of testbook to start making your own contributions.
 
 ### Building Documentation
 

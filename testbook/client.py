@@ -18,13 +18,24 @@ class TestbookNotebookClient(NotebookClient):
         return self.nb.cells
 
     @staticmethod
-    def _execute_result(outputs):
+    def _execute_result(cell):
         """Return data from execute_result outputs"""
+        return [
+            output["data"]
+            for output in cell["outputs"]
+            if output["output_type"] == 'execute_result'
+        ]
 
-        if not outputs:
+    @staticmethod
+    def _output_text(cell):
+        if not cell["outputs"]:
             return
+        text = ''
+        for output in cell["outputs"]:
+            if 'text' in output:
+                text += output['text']
 
-        return [output["data"] for output in outputs if output.output_type == 'execute_result']
+        return text.strip()
 
     def _cell_index(self, tag):
         """Get cell index from the cell tag"""
@@ -34,7 +45,7 @@ class TestbookNotebookClient(NotebookClient):
         elif not isinstance(tag, str):
             raise TypeError('expected tag as str')
 
-        for idx, cell in enumerate(self.nb['cells']):
+        for idx, cell in enumerate(self.cells):
             metadata = cell['metadata']
             if "tags" in metadata and tag in metadata['tags']:
                 return idx
@@ -67,8 +78,8 @@ class TestbookNotebookClient(NotebookClient):
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             except CellExecutionError as e:
-                raise TestbookError(str(e)) from None
-
+                # TODO: drop usage of eval
+                raise eval(e.ename)(e) from None
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -89,15 +100,10 @@ class TestbookNotebookClient(NotebookClient):
         cell_index = cell
         if isinstance(cell, str):
             cell_index = self._cell_index(cell)
-        text = ''
-        outputs = self.nb['cells'][cell_index]['outputs']
-        for output in outputs:
-            if 'text' in output:
-                text += output['text']
 
-        return text.strip()
+        return self._output_text(self.nb['cells'][cell_index])
 
-    def inject(self, code, args=None, run=False, before=None, after=None):
+    def inject(self, code, args=None, run=True, before=None, after=None):
         """Injects and executes given code block
 
         Parameters
@@ -149,13 +155,13 @@ class TestbookNotebookClient(NotebookClient):
     def value(self, name):
         """Extract a JSON-able variable value from notebook kernel"""
 
-        result = self.inject(name, run=True)
-        if not self._execute_result(result.outputs):
+        result = self.inject(name)
+        if not self._execute_result(result):
             raise TestbookError('code provided does not produce execute_result')
 
         code = """
         from IPython.display import JSON
         JSON({"value" : _})
         """
-        cell = self.inject(code, run=True)
+        cell = self.inject(code)
         return cell.outputs[0].data['application/json']['value']
