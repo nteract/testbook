@@ -18,7 +18,7 @@ class testbook:
         if self.execute is True:
             self.client.execute()
         elif self.execute not in [None, False]:
-            self.client.execute_cell(self.prerun)
+            self.client.execute_cell(self.execute)
 
     def _start_kernel(self):
         if self.client.km is None:

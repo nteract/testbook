@@ -19,7 +19,7 @@ testbook helps you set up **conventional unit tests for your Jupyter Notebooks**
 Here is an example of a unit test written using testbook:
 
 ```python
-@testbook.testbook('/path/to/notebook.ipynb', prerun='cell-tag')
+@testbook.testbook('/path/to/notebook.ipynb', execute='cell-tag')
 def test_notebook(notebook):
     assert notebook.cell_output_text('cell-tag') == 'hello world'
 ```
