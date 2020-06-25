@@ -4,9 +4,8 @@ from .client import TestbookNotebookClient
 
 
 class testbook:
-    def __init__(self, nb_path, prerun=None, execute=False, timeout=60):
+    def __init__(self, nb_path, execute=None, timeout=60):
         self.nb_path = nb_path
-        self.prerun = prerun
         self.execute = execute
         self.timeout = timeout
 
@@ -16,9 +15,9 @@ class testbook:
         self.client = TestbookNotebookClient(nb, timeout=self.timeout)
 
     def _prepare(self):
-        if self.execute:
+        if self.execute is True:
             self.client.execute()
-        elif self.prerun is not None:
+        elif self.execute not in [None, False]:
             self.client.execute_cell(self.prerun)
 
     def _start_kernel(self):
