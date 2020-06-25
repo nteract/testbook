@@ -27,13 +27,13 @@ def test_execute_cell_raises_error(notebook):
         notebook.execute_cell('error_cell')
 
 
-@testbook("testbook/tests/resources/foo.ipynb", prerun='prepare_foo')
-def test_testbook_with_prerun(notebook):
+@testbook("testbook/tests/resources/foo.ipynb", execute='prepare_foo')
+def test_testbook_with_execute(notebook):
     notebook.execute_cell('execute_foo')
     assert notebook.cell_output_text('execute_foo') == 'foo'
 
 
-def test_testbook_with_prerun_context_manager():
-    with testbook("testbook/tests/resources/foo.ipynb", prerun='prepare_foo') as notebook:
+def test_testbook_with_execute_context_manager():
+    with testbook("testbook/tests/resources/foo.ipynb", execute='prepare_foo') as notebook:
         notebook.execute_cell('execute_foo')
         assert notebook.cell_output_text('execute_foo') == 'foo'
