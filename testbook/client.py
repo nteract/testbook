@@ -21,6 +21,8 @@ class TestbookNotebookClient(NotebookClient):
         super().__init__(nb, km=km, **kw)
 
     def ref(self, name):
+        # Check if exists
+        self.inject(name)
         return TestbookObjectReference(self, name)
 
     @staticmethod
