@@ -5,11 +5,15 @@ from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from .exceptions import TestbookCellTagNotFoundError, TestbookError
+from .exceptions import (
+    TestbookCellTagNotFoundError,
+    TestbookSerializeError,
+    TestbookExecuteResultNotFoundError,
+)
+from .utils import random_varname
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
 from .reference import TestbookObjectReference
-from .utils import random_varname
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -172,14 +176,21 @@ class TestbookNotebookClient(NotebookClient):
 
         return cell
 
-    def value(self, code, safe=True):
+    def value(self, code, safe=False):
         result = self.inject(code, pop=True)
-        if not self._execute_result(result):
-            raise TestbookError('code provided does not produce execute_result')
 
-        inject_code = """
+        if not self._execute_result(result):
+            raise TestbookExecuteResultNotFoundError(
+                'code provided does not produce execute_result'
+            )
+
+        save_varname = random_varname()
+
+        inject_code = f"""
+            {save_varname} = _
+
             from IPython.display import JSON
-            JSON({"value" : _})
+            JSON({{"value" : _}})
         """
 
         try:
@@ -188,21 +199,9 @@ class TestbookNotebookClient(NotebookClient):
 
         except ValueError:
             if not safe:
-                raise
+                raise TestbookSerializeError('could not JSON serialize output')
 
-            varname = random_varname()
-            self.inject(
-                f"""
-                {varname} = _
-            """,
-                pop=True,
-            )
-            return TestbookObjectReference(self, varname)
+            return TestbookObjectReference(self, save_varname)
 
-    def _assert_in_notebook(self, lhs, rhs):
-        code = """
-        assert {lhs} == {rhs}
-        """.format(
-            lhs=lhs, rhs=PythonTranslator.translate(rhs),
-        )
-        return self.inject(code, pop=True)
+    def _eq_in_notebook(self, lhs, rhs):
+        return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
