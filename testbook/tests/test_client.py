@@ -33,7 +33,7 @@ def test_cell_index_raises_error(cell_index_args, expected_error):
     ],
 )
 def test_value(cell_tag, var_name, expected_result):
-    with testbook('testbook/tests/resources/inject.ipynb', prerun=cell_tag) as notebook:
+    with testbook('testbook/tests/resources/inject.ipynb', execute=cell_tag) as notebook:
         assert notebook.value(var_name) == expected_result
 
 
@@ -41,6 +41,6 @@ def test_value(cell_tag, var_name, expected_result):
     "cell_tag, code", [('int', 'sample_int *= 2'), ('int', 'print(sample_int)'), ('int', '')],
 )
 def test_value_raises_error(cell_tag, code):
-    with testbook('testbook/tests/resources/inject.ipynb', prerun=cell_tag) as notebook:
+    with testbook('testbook/tests/resources/inject.ipynb', execute=cell_tag) as notebook:
         with pytest.raises(TestbookError):
             notebook.value(code)

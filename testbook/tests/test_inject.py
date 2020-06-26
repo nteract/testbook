@@ -68,7 +68,7 @@ def test_inject_raises_exception():
 
 
 def test_inject_before_after():
-    with testbook('testbook/tests/resources/inject.ipynb', prerun=['hello', 'bye']) as notebook:
+    with testbook('testbook/tests/resources/inject.ipynb', execute=['hello', 'bye']) as notebook:
         notebook.inject("say_hello()", run=False, after="hello")
         assert notebook.cells[notebook._cell_index("hello") + 1].source == "say_hello()"
 
