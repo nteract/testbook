@@ -121,7 +121,3 @@ class PythonTranslator(Translator):
     def translate_tuple(cls, val):
         escaped = ', '.join([cls.translate(v) for v in val]) + ', '
         return '({})'.format(escaped)
-
-    @classmethod
-    def comment(cls, cmt_str):
-        return '# {}'.format(cmt_str).strip()

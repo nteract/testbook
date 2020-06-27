@@ -21,7 +21,7 @@ def inject_helper(*args, **kwargs):
         ((1, 2), None),
         ((True, False), None),
         (['a', 'b'], None),
-        ([[1, 2], 'b'], None),
+        ([1.1, float('nan'), float('inf'), float('-inf')], None),
         ([{'key1': 'value1'}, {'key2': 'value2'}], None),
         ((1, 2, False), {'key2': 'value2'}),
         ((None, None, False), {'key2': 'value2'}),
