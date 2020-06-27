@@ -50,6 +50,9 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _output_text(cell):
+        if not cell.get("outputs"):
+            raise ValueError("cell must be a code cell")
+
         text = ''
         for output in cell["outputs"]:
             if 'text' in output:
@@ -104,7 +107,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
-    def execute(self, **kwargs):
+    def execute(self):
         for index, cell in enumerate(self.nb.cells):
             super().execute_cell(cell, index)
 
