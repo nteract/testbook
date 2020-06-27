@@ -1,7 +1,7 @@
 import pytest
 
 from ..testbook import testbook
-from ..exceptions import TestbookCellTagNotFoundError, TestbookError
+from ..exceptions import TestbookCellTagNotFoundError, TestbookExecuteResultNotFoundError
 
 
 @pytest.fixture(scope='module')
@@ -44,5 +44,5 @@ def test_value(var_name, expected_result, notebook):
     "code", [('sample_int *= 2'), ('print(sample_int)'), ('')],
 )
 def test_value_raises_error(code, notebook):
-    with pytest.raises(TestbookError):
+    with pytest.raises(TestbookExecuteResultNotFoundError):
         notebook.value(code)

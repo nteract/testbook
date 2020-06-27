@@ -50,8 +50,6 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _output_text(cell):
-        if not cell["outputs"]:
-            return
         text = ''
         for output in cell["outputs"]:
             if 'text' in output:
