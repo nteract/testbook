@@ -5,14 +5,35 @@ from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from .exceptions import TestbookCellTagNotFoundError, TestbookError
+from .exceptions import (
+    TestbookCellTagNotFoundError,
+    TestbookSerializeError,
+    TestbookExecuteResultNotFoundError,
+)
+from .utils import random_varname
 from .testbooknode import TestbookNode
-from .utils import _construct_call_code
+from .translators import PythonTranslator
+from .reference import TestbookObjectReference
 
 
 class TestbookNotebookClient(NotebookClient):
     def __init__(self, nb, km=None, **kw):
         super().__init__(nb, km=km, **kw)
+
+    def ref(self, name):
+        # Check if exists
+        self.inject(name)
+        return TestbookObjectReference(self, name)
+
+    @staticmethod
+    def _construct_call_code(func_name, args=None, kwargs=None):
+        return """
+            {func_name}(*{args_list}, **{kwargs_dict})
+            """.format(
+            func_name=func_name,
+            args_list=PythonTranslator.translate(args) if args else [],
+            kwargs_dict=PythonTranslator.translate(kwargs) if kwargs else {},
+        )
 
     @property
     def cells(self):
@@ -29,8 +50,9 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _output_text(cell):
-        if not cell["outputs"]:
-            return
+        if not cell.get("outputs"):
+            raise ValueError("cell must be a code cell")
+
         text = ''
         for output in cell["outputs"]:
             if 'text' in output:
@@ -85,6 +107,10 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
+    def execute(self):
+        for index, cell in enumerate(self.nb.cells):
+            super().execute_cell(cell, index)
+
     def cell_output_text(self, cell):
         """Return cell text output
 
@@ -104,7 +130,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return self._output_text(self.nb['cells'][cell_index])
 
-    def inject(self, code, args=None, run=True, before=None, after=None):
+    def inject(self, code, args=None, kwargs=None, run=True, before=None, after=None, pop=False):
         """Injects and executes given code block
 
         Parameters
@@ -113,6 +139,8 @@ class TestbookNotebookClient(NotebookClient):
                 Code or function to be injected
             args : tuple (optional)
                 tuple of arguments to be passed to the function
+            kwargs : dict (optional)
+                dict of keyword arguments to be passed to the function
             run : bool (optional)
                 If True, the code is immediately executed after injection.
                 Defaults to False.
@@ -120,6 +148,8 @@ class TestbookNotebookClient(NotebookClient):
                 Inject code before cell
             after : str or int (optional)
                 Inject code after cell
+            pop : bool (optional)
+                Pop cell after execution
         Returns
         -------
             cell : TestbookNode
@@ -129,7 +159,7 @@ class TestbookNotebookClient(NotebookClient):
             lines = dedent(code)
         elif callable(code):
             lines = getsource(code) + (
-                dedent(_construct_call_code(code.__name__, args)) if run else ''
+                dedent(self._construct_call_code(code.__name__, args, kwargs)) if run else ''
             )
         else:
             raise TypeError('can only inject function or code block as str')
@@ -146,18 +176,38 @@ class TestbookNotebookClient(NotebookClient):
         code_cell = new_code_cell(lines)
         self.cells.insert(inject_idx, code_cell)
 
-        return TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
+        cell = TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
 
-    def value(self, name):
-        """Extract a JSON-able variable value from notebook kernel"""
+        if run and pop:
+            self.cells.pop(inject_idx)
 
-        result = self.inject(name)
+        return cell
+
+    def value(self, code):
+        result = self.inject(code, pop=True)
+
         if not self._execute_result(result):
-            raise TestbookError('code provided does not produce execute_result')
+            raise TestbookExecuteResultNotFoundError(
+                'code provided does not produce execute_result'
+            )
 
-        code = """
-        from IPython.display import JSON
-        JSON({"value" : _})
+        save_varname = random_varname()
+
+        inject_code = f"""
+            {save_varname} = _
+
+            from IPython.display import JSON
+            JSON({{"value" : _}})
         """
-        cell = self.inject(code)
-        return cell.outputs[0].data['application/json']['value']
+
+        try:
+            outputs = self.inject(inject_code, pop=True).outputs
+            return outputs[0].data['application/json']['value']
+
+        except ValueError:
+            e = TestbookSerializeError('could not JSON serialize output')
+            e.save_varname = save_varname
+            raise e
+
+    def _eq_in_notebook(self, lhs, rhs):
+        return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))

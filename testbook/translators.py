@@ -2,6 +2,8 @@
 import math
 import sys
 
+from .reference import TestbookObjectReference
+
 
 class Translator(object):
     @classmethod
@@ -72,6 +74,8 @@ class Translator(object):
             return cls.translate_list(val)
         elif isinstance(val, tuple):
             return cls.translate_tuple(val)
+        elif isinstance(val, TestbookObjectReference):
+            return val.name
 
         # Use this generic translation as a last resort
         return cls.translate_escaped_str(val)
@@ -117,7 +121,3 @@ class PythonTranslator(Translator):
     def translate_tuple(cls, val):
         escaped = ', '.join([cls.translate(v) for v in val]) + ', '
         return '({})'.format(escaped)
-
-    @classmethod
-    def comment(cls, cmt_str):
-        return '# {}'.format(cmt_str).strip()

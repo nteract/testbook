@@ -20,17 +20,10 @@ class testbook:
         elif self.execute not in [None, False]:
             self.client.execute_cell(self.execute)
 
-    def _start_kernel(self):
-        if self.client.km is None:
-            self.client.start_kernel_manager()
-
-        if not self.client.km.has_kernel:
-            self.client.start_new_kernel_client()
-
     def __enter__(self):
-        self._start_kernel()
-        self._prepare()
-        return self.client
+        with self.client.setup_kernel(cleanup_kc=False):
+            self._prepare()
+            return self.client
 
     def __exit__(self, *args):
         self.client._cleanup_kernel()

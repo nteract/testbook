@@ -1,46 +1,48 @@
 import pytest
 
 from ..testbook import testbook
-from ..exceptions import TestbookCellTagNotFoundError, TestbookError
+from ..exceptions import TestbookCellTagNotFoundError, TestbookExecuteResultNotFoundError
+
+
+@pytest.fixture(scope='module')
+def notebook():
+    with testbook('testbook/tests/resources/inject.ipynb', execute=True) as tb:
+        yield tb
 
 
 @pytest.mark.parametrize("cell_index_args, expected_result", [(2, 2), ('hello', 1)])
-def test_cell_index(cell_index_args, expected_result):
-    with testbook('testbook/tests/resources/inject.ipynb') as notebook:
-        assert notebook._cell_index(cell_index_args) == expected_result
+def test_cell_index(cell_index_args, expected_result, notebook):
+    assert notebook._cell_index(cell_index_args) == expected_result
 
 
 @pytest.mark.parametrize(
     "cell_index_args, expected_error",
     [([1, 2, 3], TypeError), ('non-existent-tag', TestbookCellTagNotFoundError)],
 )
-def test_cell_index_raises_error(cell_index_args, expected_error):
-    with testbook('testbook/tests/resources/inject.ipynb') as notebook:
-        with pytest.raises(expected_error):
-            notebook._cell_index(cell_index_args)
+def test_cell_index_raises_error(cell_index_args, expected_error, notebook):
+    with pytest.raises(expected_error):
+        notebook._cell_index(cell_index_args)
 
 
 @pytest.mark.parametrize(
-    "cell_tag, var_name, expected_result",
+    "var_name, expected_result",
     [
-        ('dict', 'sample_dict', {'foo': 'bar'}),
-        ('list', 'sample_list', ['foo', 'bar']),
-        ('list', 'sample_list + ["hello world"]', ['foo', 'bar', 'hello world']),
-        ('int', 'sample_int', 42),
-        ('int', 'sample_int * 2', 84),
-        ('str', 'sample_str', 'hello world'),
-        ('str', 'sample_str + " foo"', 'hello world foo'),
+        ('sample_dict', {'foo': 'bar'}),
+        ('sample_list', ['foo', 'bar']),
+        ('sample_list + ["hello world"]', ['foo', 'bar', 'hello world']),
+        ('sample_int', 42),
+        ('sample_int * 2', 84),
+        ('sample_str', 'hello world'),
+        ('sample_str + " foo"', 'hello world foo'),
     ],
 )
-def test_value(cell_tag, var_name, expected_result):
-    with testbook('testbook/tests/resources/inject.ipynb', execute=cell_tag) as notebook:
-        assert notebook.value(var_name) == expected_result
+def test_value(var_name, expected_result, notebook):
+    assert notebook.value(var_name) == expected_result
 
 
 @pytest.mark.parametrize(
-    "cell_tag, code", [('int', 'sample_int *= 2'), ('int', 'print(sample_int)'), ('int', '')],
+    "code", [('sample_int *= 2'), ('print(sample_int)'), ('')],
 )
-def test_value_raises_error(cell_tag, code):
-    with testbook('testbook/tests/resources/inject.ipynb', execute=cell_tag) as notebook:
-        with pytest.raises(TestbookError):
-            notebook.value(code)
+def test_value_raises_error(code, notebook):
+    with pytest.raises(TestbookExecuteResultNotFoundError):
+        notebook.value(code)

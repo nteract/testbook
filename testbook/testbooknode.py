@@ -17,3 +17,12 @@ class TestbookNode(NotebookNode):
                 text += output['text']
 
         return text.strip()
+
+    @property
+    def execute_result(self):
+        """Return data from execute_result outputs"""
+        return [
+            output["data"]
+            for output in self["outputs"]
+            if output["output_type"] == 'execute_result'
+        ]
