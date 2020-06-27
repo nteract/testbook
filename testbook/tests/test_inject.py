@@ -73,3 +73,8 @@ def test_inject_before_after(notebook):
 
     with pytest.raises(ValueError):
         notebook.inject("say_hello()", before="hello", after="bye")
+
+
+def test_inject_pop(notebook):
+    assert notebook.inject("1+1", pop=True).execute_result == [{'text/plain': '2'}]
+    assert notebook.cells[-1].source != "1+1"
