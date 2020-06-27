@@ -32,7 +32,7 @@ class TestbookNotebookClient(NotebookClient):
             """.format(
             func_name=func_name,
             args_list=PythonTranslator.translate(args) if args else [],
-            kwargs_dict=PythonTranslator.translate(args) if kwargs else {},
+            kwargs_dict=PythonTranslator.translate(kwargs) if kwargs else {},
         )
 
     @property
