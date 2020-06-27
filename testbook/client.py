@@ -106,6 +106,10 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
+    def execute(self, **kwargs):
+        for index, cell in enumerate(self.nb.cells):
+            super().execute_cell(cell, index)
+
     def cell_output_text(self, cell):
         """Return cell text output
 
