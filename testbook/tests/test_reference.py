@@ -11,18 +11,23 @@ def notebook():
 
 
 def test_create_reference(notebook):
-    spam = notebook.ref("spam")
-    assert repr(spam) == "[1, 2, 3]"
-    assert spam._type == 'list'
-    assert spam.resolve() == [1, 2, 3]
+    a = notebook.ref("a")
+    assert repr(a) == "[1, 2, 3]"
+    assert a._type == 'list'
+    assert a.resolve() == [1, 2, 3]
 
 
 def test_eq_in_notebook(notebook):
-    spam = notebook.ref("spam")
-    spam.append(4)
-    assert spam == [1, 2, 3, 4]
+    a = notebook.ref("a")
+    a.append(4)
+    assert a == [1, 2, 3, 4]
 
-    spam.remove(4)
+    a.remove(4)
+
+
+def test_eq_in_notebook_ref(notebook):
+    a, b = notebook.ref("a"), notebook.ref("b")
+    assert a == b
 
 
 def test_function_call(notebook):
@@ -31,9 +36,9 @@ def test_function_call(notebook):
 
 
 def test_function_call_with_ref_object(notebook):
-    double, spam = notebook.ref("double"), notebook.ref("spam")
+    double, a = notebook.ref("double"), notebook.ref("a")
 
-    assert double(spam) == [2, 4, 6]
+    assert double(a) == [2, 4, 6]
 
 
 def test_reference(notebook):

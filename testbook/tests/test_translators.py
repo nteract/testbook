@@ -43,7 +43,7 @@ def test_translate_type_python(test_input, expected):
     assert translators.PythonTranslator.translate(test_input) == expected
 
 
-@pytest.mark.parametrize("test_input,expected", [(3.14, "3.14"), (False, "false"), (True, "true"),])
+@pytest.mark.parametrize("test_input,expected", [(3.14, "3.14"), (False, "false"), (True, "true")])
 def test_translate_float(test_input, expected):
     assert translators.Translator.translate(test_input) == expected
 
