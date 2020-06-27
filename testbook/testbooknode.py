@@ -18,5 +18,11 @@ class TestbookNode(NotebookNode):
 
         return text.strip()
 
-    def assert_output_text(self, expected_text):
-        assert self.output_text == expected_text.strip()
+    @property
+    def execute_result(self):
+        """Return data from execute_result outputs"""
+        return [
+            output["data"]
+            for output in self["outputs"]
+            if output["output_type"] == 'execute_result'
+        ]
