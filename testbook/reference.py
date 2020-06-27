@@ -1,6 +1,7 @@
 from .exceptions import (
     TestbookExecuteResultNotFoundError,
     TestbookAttributeError,
+    TestbookSerializeError,
 )
 
 
@@ -28,10 +29,12 @@ class TestbookObjectReference:
     def __call__(self, *args, **kwargs):
         code = self.tb._construct_call_code(self.name, args, kwargs)
         try:
-            return self.tb.value(code, safe=True)
+            return self.tb.value(code)
         except TestbookExecuteResultNotFoundError:
             # No return value from function call
             pass
+        except TestbookSerializeError as e:
+            return TestbookObjectReference(self.tb, e.save_varname)
 
     def resolve(self):
         return self.tb.value(self.name)

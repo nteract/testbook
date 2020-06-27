@@ -183,7 +183,7 @@ class TestbookNotebookClient(NotebookClient):
 
         return cell
 
-    def value(self, code, safe=False):
+    def value(self, code):
         result = self.inject(code, pop=True)
 
         if not self._execute_result(result):
@@ -205,10 +205,9 @@ class TestbookNotebookClient(NotebookClient):
             return outputs[0].data['application/json']['value']
 
         except ValueError:
-            if not safe:
-                raise TestbookSerializeError('could not JSON serialize output')
-
-            return TestbookObjectReference(self, save_varname)
+            e = TestbookSerializeError('could not JSON serialize output')
+            e.save_varname = save_varname
+            raise e
 
     def _eq_in_notebook(self, lhs, rhs):
         return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
