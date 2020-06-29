@@ -72,7 +72,7 @@ def test_value_raises_error(code, notebook):
             bar
             """,
         ),
-        ({"cell_type": "code", "execution_count": 9, "metadata": {}, "outputs": [],}, "",),
+        ({"cell_type": "code", "execution_count": 9, "metadata": {}, "outputs": []}, ""),
     ],
 )
 def test_output_text(cell, expected_result):
@@ -80,7 +80,7 @@ def test_output_text(cell, expected_result):
 
 
 @pytest.mark.parametrize(
-    "cell", [{}, {"cell_type": "markdown", "metadata": {}, "source": ["# Hello"]},]
+    "cell", [{}, {"cell_type": "markdown", "metadata": {}, "source": ["# Hello"]}]
 )
 def test_output_text_raises_error(cell):
     with pytest.raises(ValueError):
