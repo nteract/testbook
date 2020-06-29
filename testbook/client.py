@@ -58,11 +58,7 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _output_text(cell) -> str:
-        """
-        Returns output text from a code cell
-        """
-
-        if not cell.get("outputs"):
+        if "outputs" not in cell:
             raise ValueError("cell must be a code cell")
 
         text = ''
