@@ -12,6 +12,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('..'))
 
 
@@ -32,7 +33,8 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
-    'myst_parser',
+    'myst_nb',
+    # 'myst_parser',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

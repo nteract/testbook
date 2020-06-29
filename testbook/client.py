@@ -15,18 +15,24 @@ from .testbooknode import TestbookNode
 from .translators import PythonTranslator
 from .reference import TestbookObjectReference
 
+from typing import Union, Optional, Dict, List, Any
+
 
 class TestbookNotebookClient(NotebookClient):
     def __init__(self, nb, km=None, **kw):
         super().__init__(nb, km=km, **kw)
 
-    def ref(self, name):
+    def ref(self, name: str) -> TestbookObjectReference:
+        """
+        Return a reference to an object in the kernel
+        """
+
         # Check if exists
         self.inject(name)
         return TestbookObjectReference(self, name)
 
     @staticmethod
-    def _construct_call_code(func_name, args=None, kwargs=None):
+    def _construct_call_code(func_name: str, args=None, kwargs=None):
         return """
             {func_name}(*{args_list}, **{kwargs_dict})
             """.format(
@@ -41,7 +47,10 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _execute_result(cell):
-        """Return data from execute_result outputs"""
+        """
+        Return data from execute_result outputs
+        """
+
         return [
             output["data"]
             for output in cell["outputs"]
@@ -49,7 +58,11 @@ class TestbookNotebookClient(NotebookClient):
         ]
 
     @staticmethod
-    def _output_text(cell):
+    def _output_text(cell) -> str:
+        """
+        Returns output text from a code cell
+        """
+
         if not cell.get("outputs"):
             raise ValueError("cell must be a code cell")
 
@@ -60,8 +73,10 @@ class TestbookNotebookClient(NotebookClient):
 
         return text.strip()
 
-    def _cell_index(self, tag):
-        """Get cell index from the cell tag"""
+    def _cell_index(self, tag: Union[int, str]) -> int:
+        """
+        Get cell index from the cell tag
+        """
 
         if isinstance(tag, int):
             return tag
@@ -75,17 +90,9 @@ class TestbookNotebookClient(NotebookClient):
 
         raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
 
-    def execute_cell(self, cell, **kwargs):
-        """Executes a cell or list of cells
-
-        Parameters
-        ----------
-            cell : int or str or list
-                cell index (or cell tag)
-
-        Returns
-        -------
-            executed_cells : dict or list
+    def execute_cell(self, cell, **kwargs) -> Union[Dict, List[Dict]]:
+        """
+        Executes a cell or list of cells
         """
 
         if not isinstance(cell, list):
@@ -107,21 +114,17 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
-    def execute(self):
+    def execute(self) -> None:
+        """
+        Executes all cells
+        """
+
         for index, cell in enumerate(self.nb.cells):
             super().execute_cell(cell, index)
 
-    def cell_output_text(self, cell):
-        """Return cell text output
-
-        Parameters
-        ----------
-            cell : int or str
-                cell index (or cell tag)
-
-        Returns
-        -------
-            text : str
+    def cell_output_text(self, cell) -> str:
+        """
+        Return cell text output
         """
 
         cell_index = cell
@@ -130,29 +133,37 @@ class TestbookNotebookClient(NotebookClient):
 
         return self._output_text(self.nb['cells'][cell_index])
 
-    def inject(self, code, args=None, kwargs=None, run=True, before=None, after=None, pop=False):
+    def inject(
+        self,
+        code: str,
+        args: List = None,
+        kwargs: Dict = None,
+        run: bool = True,
+        before: Optional[Union[str, int]] = None,
+        after: Optional[Union[str, int]] = None,
+        pop: bool = False,
+    ) -> TestbookNode:
         """Injects and executes given code block
 
         Parameters
         ----------
-            code :  str or callable
-                Code or function to be injected
-            args : tuple (optional)
-                tuple of arguments to be passed to the function
-            kwargs : dict (optional)
-                dict of keyword arguments to be passed to the function
-            run : bool (optional)
-                If True, the code is immediately executed after injection.
-                Defaults to False.
-            before : str or int (optional)
-                Inject code before cell
-            after : str or int (optional)
-                Inject code after cell
-            pop : bool (optional)
-                Pop cell after execution
+        code : str
+            Code or function to be injected
+        args : iterable, optional
+            tuple of arguments to be passed to the function
+        kwargs : dict, optional
+            dict of keyword arguments to be passed to the function
+        run : bool, optional
+            Control immediate execution after injection (default is True)
+        before, after : int, str, optional
+            Inject code before or after cell
+        pop : bool
+            Pop cell after execution (default is False)
+
         Returns
         -------
-            cell : TestbookNode
+        TestbookNode
+            Injected cell
         """
 
         if isinstance(code, str):
@@ -183,7 +194,30 @@ class TestbookNotebookClient(NotebookClient):
 
         return cell
 
-    def value(self, code):
+    def value(self, code: str) -> Any:
+        """
+        Execute given code in the kernel and return JSON serializeable result.
+
+        If the result is not JSON serializeable, it raises `TestbookAttributeError`.
+        This error object will also contain an attribute called `save_varname` which
+        can be used to create a reference object with :meth:`ref`.
+
+        Parameters
+        ----------
+        code: str
+            This can be any executable code that returns a value.
+            It can be used the return the value of an object, or the output
+            of a function call.
+
+        Returns
+        -------
+        The output of the executed code
+
+        Raises
+        ------
+            TestbookSerializeError
+
+        """
         result = self.inject(code, pop=True)
 
         if not self._execute_result(result):
