@@ -1,5 +1,6 @@
 from inspect import getsource
 from textwrap import dedent
+from typing import Any, Dict, List, Optional, Union
 
 from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
@@ -7,15 +8,13 @@ from nbformat.v4 import new_code_cell
 
 from .exceptions import (
     TestbookCellTagNotFoundError,
-    TestbookSerializeError,
     TestbookExecuteResultNotFoundError,
+    TestbookSerializeError,
 )
-from .utils import random_varname
+from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
-from .reference import TestbookObjectReference
-
-from typing import Union, Optional, Dict, List, Any
+from .utils import random_varname
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -32,7 +31,7 @@ class TestbookNotebookClient(NotebookClient):
         return TestbookObjectReference(self, name)
 
     @staticmethod
-    def _construct_call_code(func_name: str, args=None, kwargs=None):
+    def _construct_call_code(func_name: str, args=None, kwargs=None) -> str:
         return """
             {func_name}(*{args_list}, **{kwargs_dict})
             """.format(
@@ -46,7 +45,7 @@ class TestbookNotebookClient(NotebookClient):
         return self.nb.cells
 
     @staticmethod
-    def _execute_result(cell):
+    def _execute_result(cell) -> List:
         """
         Return data from execute_result outputs
         """
@@ -243,5 +242,5 @@ class TestbookNotebookClient(NotebookClient):
             e.save_varname = save_varname
             raise e
 
-    def _eq_in_notebook(self, lhs, rhs):
+    def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
         return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
