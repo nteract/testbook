@@ -25,7 +25,7 @@ kernelspec:
 
 Previous attempts at unit testing notebooks involved writing the tests in the notebook itself. However, testbook will allow for unit tests to be run against notebooks in separate test files, hence treating `.ipynb` files as `.py` files.
 
-An example of a unit test written using testbook
+Here is an example of a unit test written using testbook
 
 Consider the following code cell in a Jupyter Notebook:
 
