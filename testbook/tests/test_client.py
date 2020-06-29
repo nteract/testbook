@@ -1,6 +1,8 @@
 import pytest
+from textwrap import dedent
 
 from ..testbook import testbook
+from ..client import TestbookNotebookClient
 from ..exceptions import TestbookCellTagNotFoundError, TestbookExecuteResultNotFoundError
 
 
@@ -46,3 +48,40 @@ def test_value(var_name, expected_result, notebook):
 def test_value_raises_error(code, notebook):
     with pytest.raises(TestbookExecuteResultNotFoundError):
         notebook.value(code)
+
+
+@pytest.mark.parametrize(
+    "cell, expected_result",
+    [
+        (
+            {
+                "cell_type": "code",
+                "execution_count": 9,
+                "metadata": {},
+                "outputs": [
+                    {
+                        "name": "stdout",
+                        "output_type": "stream",
+                        "text": "hello world\n" "foo\n" "bar\n",
+                    },
+                ],
+            },
+            """
+            hello world
+            foo
+            bar
+            """,
+        ),
+        ({"cell_type": "code", "execution_count": 9, "metadata": {}, "outputs": []}, ""),
+    ],
+)
+def test_output_text(cell, expected_result):
+    assert TestbookNotebookClient._output_text(cell) == dedent(expected_result).strip()
+
+
+@pytest.mark.parametrize(
+    "cell", [{}, {"cell_type": "markdown", "metadata": {}, "source": ["# Hello"]}]
+)
+def test_output_text_raises_error(cell):
+    with pytest.raises(ValueError):
+        assert TestbookNotebookClient._output_text(cell)
