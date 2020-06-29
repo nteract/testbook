@@ -16,12 +16,26 @@ hence treating .ipynb files as .py files.
 
 testbook helps you set up **conventional unit tests for your Jupyter Notebooks**.
 
-Here is an example of a unit test written using testbook:
+Here is an example of a unit test written using testbook
+
+Consider the following code cell in a Jupyter Notebook:
 
 ```python
-@testbook.testbook('/path/to/notebook.ipynb', execute='cell-tag')
-def test_notebook(notebook):
-    assert notebook.cell_output_text('cell-tag') == 'hello world'
+def sum(a, b):
+   return a + b
+```
+
+You would write a unit test using `testbook` in a Python file as follows:
+
+```python
+import testbook
+
+
+@testbook.testbook('/path/to/notebook.ipynb', execute='sum-cell')
+def test_notebook(tb):
+   sum = tb.ref("sum")
+
+   assert sum(1, 2) == 3
 ```
 
 ## Documentation
