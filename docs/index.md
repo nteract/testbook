@@ -67,6 +67,7 @@ def test_notebook(tb):
 getting-started/index.md
 usage/index.md
 reference/index.rst
+changelog.md
 ```
 
 [github-ci]: https://github.com/nteract/testbook/workflows/CI/badge.svg
