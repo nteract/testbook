@@ -45,9 +45,9 @@ doc_reqs = read_reqs(os.path.join(os.path.dirname(__file__), 'docs/requirements-
 extras_require = {"test": dev_reqs, "dev": dev_reqs, "sphinx": doc_reqs}
 
 setup(
-    name='testbook',
+    name='nteract-testbook',
     version=version(),
-    description='TODO',
+    description='A unit testing framework for Jupyter Notebooks',
     author='nteract contributors',
     author_email='nteract@googlegroups.com',
     license='BSD',
