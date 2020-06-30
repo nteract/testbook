@@ -54,7 +54,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
 You may also choose to execute all or some cells:
 
-- Pass `execute=True` to execute the entire notebook before the test. In this case, it might be better to set up a [module scoped pytest fixture](usage/index.html#share-kernel-context-across-multiple-tests).
+- Pass `execute=True` to execute the entire notebook before the test. In this case, it might be better to set up a [module scoped pytest fixture](#share-kernel-context-across-multiple-tests).
 
 - Pass `execute=['cell1', 'cell2']` or `execute='cell1'` to only execute the specified cell(s) before the test.
 
