@@ -30,7 +30,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
    from testbook import testbook
 
-   @testbook.testbook('/path/to/notebook.ipynb', execute=['cell1', 'cell2'])
+   @testbook.testbook('/path/to/notebook.ipynb', execute=True)
    def test_notebook(tb):
        sum = tb.ref("sum")
 
@@ -44,7 +44,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
    from testbook import testbook
 
    def test_notebook():
-       with testbook('/path/to/notebook.ipynb', execute=['cell1', 'cell2']) as tb:
+       with testbook('/path/to/notebook.ipynb', execute=True) as tb:
            sum = tb.ref("sum")
 
            assert sum(1, 2) == 3

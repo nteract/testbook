@@ -40,7 +40,7 @@ You would write a unit test using `testbook` in a Python file as follows:
 import testbook
 
 
-@testbook.testbook('/path/to/notebook.ipynb', execute='sum-cell')
+@testbook.testbook('/path/to/notebook.ipynb', execute=True)
 def test_notebook(tb):
    sum = tb.ref("sum")
 
