@@ -159,8 +159,8 @@ def test_bar(tb):
     assert bar(data) == [2, 4, 6]
 ```
 
-[fixture]: https://docs.pytest.org/en/stable/fixture.html#scope-sharing-a-fixture-instance-across-tests-in-a-class-module-or-session
-
 ```{warning}
 Note that since the kernel is being shared in case of module scoped fixtures, you might run into weird state issues. Please keep in mind that changes made to an object in one test will reflect in other tests too. This will likely be fixed in future versions of testbook.
 ```
+
+[fixture]: https://docs.pytest.org/en/stable/fixture.html#scope-sharing-a-fixture-instance-across-tests-in-a-class-module-or-session
