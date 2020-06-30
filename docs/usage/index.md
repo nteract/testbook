@@ -31,10 +31,10 @@ These patterns are interchangeable in most cases. If there are nested decorators
    from testbook import testbook
 
    @testbook.testbook('/path/to/notebook.ipynb', execute=True)
-   def test_notebook(tb):
-       sum = tb.ref("sum")
+   def test_func(tb):
+       func = tb.ref("func")
 
-       assert sum(1, 2) == 3
+       assert func(1, 2) == 3
   ```
 
 - Context manager pattern
@@ -43,11 +43,11 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
    from testbook import testbook
 
-   def test_notebook():
+   def test_func():
        with testbook('/path/to/notebook.ipynb', execute=True) as tb:
-           sum = tb.ref("sum")
+           func = tb.ref("func")
 
-           assert sum(1, 2) == 3
+           assert func(1, 2) == 3
   ```
 
 ### Using `execute` to control which cells are executed before test

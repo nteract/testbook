@@ -1,6 +1,7 @@
 [![Build Status](https://github.com/nteract/testbook/workflows/CI/badge.svg)](https://github.com/nteract/testbook/actions)
 [![image](https://codecov.io/github/nteract/testbook/coverage.svg?branch=master)](https://codecov.io/github/nteract/testbook?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/test-book/badge/?version=latest)](https://test-book.readthedocs.io/en/latest/?badge=latest)
+[![PyPI](https://img.shields.io/pypi/v/nteract-testbook.svg)](https://pypi.org/project/nteract-testbook/)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
@@ -21,7 +22,7 @@ Here is an example of a unit test written using testbook
 Consider the following code cell in a Jupyter Notebook:
 
 ```python
-def sum(a, b):
+def func(a, b):
    return a + b
 ```
 
@@ -33,10 +34,10 @@ import testbook
 
 
 @testbook.testbook('/path/to/notebook.ipynb', execute=True)
-def test_notebook(tb):
-   sum = tb.ref("sum")
+def test_func(tb):
+   func = tb.ref("func")
 
-   assert sum(1, 2) == 3
+   assert func(1, 2) == 3
 ```
 
 ## Installing `testbook`

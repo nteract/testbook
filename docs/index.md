@@ -16,6 +16,7 @@ kernelspec:
 [![Github-CI][github-ci]][github-ci-link]
 [![Coverage Status][codecov-badge]][codecov-link]
 [![Documentation Status][rtd-badge]][rtd-link]
+[![PyPI][pypi-badge]][pypi-link]
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
@@ -30,7 +31,7 @@ Here is an example of a unit test written using testbook
 Consider the following code cell in a Jupyter Notebook:
 
 ```{code-cell} ipython3
-def sum(a, b):
+def func(a, b):
    return a + b
 ```
 
@@ -41,10 +42,10 @@ import testbook
 
 
 @testbook.testbook('/path/to/notebook.ipynb', execute=True)
-def test_notebook(tb):
-   sum = tb.ref("sum")
+def test_func(tb):
+   func = tb.ref("func")
 
-   assert sum(1, 2) == 3
+   assert func(1, 2) == 3
 ```
 
 ---
@@ -78,3 +79,5 @@ changelog.md
 [codecov-badge]: https://codecov.io/gh/nteract/testbook/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/nteract/testbook
 [github-badge]: https://img.shields.io/github/stars/nteract/testbook?label=github
+[pypi-badge]: https://img.shields.io/pypi/v/nteract-testbook.svg
+[pypi-link]: https://pypi.org/project/nteract-testbook/
