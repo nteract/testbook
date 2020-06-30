@@ -61,7 +61,7 @@ setup(
     install_requires=requirements,
     extras_require=extras_require,
     project_urls={
-        'Documentation': 'https://testbook.readthedocs.io',
+        'Documentation': 'https://test-book.readthedocs.io',
         'Funding': 'https://nteract.io',
         'Source': 'https://github.com/nteract/testbook/',
         'Tracker': 'https://github.com/nteract/testbook/issues',
