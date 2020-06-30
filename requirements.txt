@@ -1,2 +1,2 @@
-nbformat==5.0.4
-nbclient==0.4.0
+nbformat>=5.0.4
+nbclient>=0.4.0
