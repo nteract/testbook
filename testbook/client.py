@@ -31,7 +31,9 @@ class TestbookNotebookClient(NotebookClient):
         return TestbookObjectReference(self, name)
 
     @staticmethod
-    def _construct_call_code(func_name: str, args=None, kwargs=None) -> str:
+    def _construct_call_code(
+        func_name: str, args: Optional[List] = None, kwargs: Optional[Dict] = None
+    ) -> str:
         return """
             {func_name}(*{args_list}, **{kwargs_dict})
             """.format(

@@ -16,10 +16,8 @@ kernelspec:
 
 ## Installing `testbook`
 
-<!-- TODO: add package name -->
-
 ```{code-block} bash
-pip install ...
+pip install nteract-testbook
 ```
 
 ## Create your first test

@@ -39,6 +39,12 @@ def test_notebook(tb):
    assert sum(1, 2) == 3
 ```
 
+## Installing `testbook`
+
+```{code-block} bash
+pip install nteract-testbook
+```
+
 ## Documentation
 
 See [readthedocs](https://test-book.readthedocs.io/en/latest/) for more in-depth details.
