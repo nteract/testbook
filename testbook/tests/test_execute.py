@@ -38,3 +38,22 @@ def test_testbook_with_execute(notebook):
 def test_testbook_with_execute_context_manager(notebook):
     notebook.execute_cell('execute_foo')
     assert notebook.cell_output_text('execute_foo') == 'foo'
+
+
+def test_testbook_range():
+    with testbook('testbook/tests/resources/inject.ipynb') as tb:
+        tb.execute_cell(range(4))
+        assert tb.code_cells_executed == 4
+
+    with testbook('testbook/tests/resources/inject.ipynb', execute=range(4)) as tb:
+        assert tb.code_cells_executed == 4
+
+
+@pytest.mark.parametrize("slice_params, expected_result", [(('hello', 'str'), 5), ((2, 5), 3),])
+def test_testbook_slice(slice_params, expected_result):
+    with testbook('testbook/tests/resources/inject.ipynb') as tb:
+        tb.execute_cell(slice(*slice_params))
+        assert tb.code_cells_executed == expected_result
+
+    with testbook('testbook/tests/resources/inject.ipynb', execute=slice(*slice_params)) as tb:
+        assert tb.code_cells_executed == expected_result
