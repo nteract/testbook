@@ -1,5 +1,6 @@
 from .utils import random_varname
 from .translators import PythonTranslator
+from .reference import TestbookObjectReference
 
 
 class patch:
@@ -9,6 +10,7 @@ class patch:
         self.kwargs = kwargs
 
     def __enter__(self):
+        self.mock_object = f'_mock_{random_varname()}'
         self.patcher = f'_patcher_{random_varname()}'
         self.tb.inject(
             f"""
@@ -17,9 +19,10 @@ class patch:
                 {PythonTranslator.translate(self.target)},
                 **{PythonTranslator.translate(self.kwargs)}
             )
-            {self.patcher}.start()
+            {self.mock_object} = {self.patcher}.start()
         """
         )
+        return TestbookObjectReference(self.tb, self.mock_object)
 
     def __exit__(self, *args):
         self.tb.inject(
