@@ -29,3 +29,12 @@ class TestPatch:
         with tb.patch("os.listdir", return_value=['file1', 'file2']) as mock_listdir:
             assert tb.ref("listdir")() == ['file1', 'file2']
             mock_listdir.assert_called_once()
+
+
+class TestPatchDict:
+    @pytest.mark.parametrize(
+        "in_dict, values", [("os.environ", {"PATH": "/usr/bin"})],
+    )
+    def test_patch_dict(self, in_dict, values, tb):
+        with tb.patch_dict(in_dict, values, clear=True):
+            assert tb.ref(in_dict) == values

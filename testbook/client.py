@@ -266,3 +266,25 @@ class TestbookNotebookClient(NotebookClient):
         yield TestbookObjectReference(self, mock_object)
 
         self.inject(f"{patcher}.stop()")
+
+    @contextmanager
+    def patch_dict(self, in_dict, values=(), clear=False, **kwargs):
+        mock_object = f'_mock_{random_varname()}'
+        patcher = f'_patcher_{random_varname()}'
+
+        self.inject(
+            f"""
+            from unittest.mock import patch
+            {patcher} = patch.dict(
+                {PythonTranslator.translate(in_dict)},
+                {PythonTranslator.translate(values)},
+                {PythonTranslator.translate(clear)},
+                **{PythonTranslator.translate(kwargs)}
+            )
+            {mock_object} = {patcher}.start()
+        """
+        )
+
+        yield TestbookObjectReference(self, mock_object)
+
+        self.inject(f"{patcher}.stop()")
