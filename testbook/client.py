@@ -228,6 +228,9 @@ class TestbookNotebookClient(NotebookClient):
         inject_code = f"""
             {save_varname} = _
 
+            import json
+            json.dumps(_)
+
             from IPython.display import JSON
             JSON({{"value" : _}})
         """
@@ -236,7 +239,7 @@ class TestbookNotebookClient(NotebookClient):
             outputs = self.inject(inject_code, pop=True).outputs
             return outputs[0].data['application/json']['value']
 
-        except ValueError:
+        except (ValueError, TypeError):
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
