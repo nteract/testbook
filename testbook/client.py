@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from inspect import getsource
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
@@ -15,7 +16,6 @@ from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
 from .utils import random_varname
-from .patch import patch
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -244,5 +244,22 @@ class TestbookNotebookClient(NotebookClient):
     def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
         return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
 
+    @contextmanager
     def patch(self, target, **kwargs):
-        return patch(self, target, **kwargs)
+        mock_object = f'_mock_{random_varname()}'
+        patcher = f'_patcher_{random_varname()}'
+
+        self.inject(
+            f"""
+            from unittest.mock import patch
+            {patcher} = patch(
+                {PythonTranslator.translate(target)},
+                **{PythonTranslator.translate(kwargs)}
+            )
+            {mock_object} = {patcher}.start()
+        """
+        )
+
+        yield TestbookObjectReference(self, mock_object)
+
+        self.inject(f"{patcher}.stop()")
