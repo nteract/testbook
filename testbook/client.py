@@ -15,6 +15,7 @@ from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
 from .utils import random_varname
+from .patch import patch
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -27,7 +28,7 @@ class TestbookNotebookClient(NotebookClient):
         """
 
         # Check if exists
-        self.inject(name)
+        self.inject(name, pop=True)
         return TestbookObjectReference(self, name)
 
     @staticmethod
@@ -242,3 +243,6 @@ class TestbookNotebookClient(NotebookClient):
 
     def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
         return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
+
+    def patch(self, target, **kwargs):
+        return patch(self, target, **kwargs)
