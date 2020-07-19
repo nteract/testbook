@@ -24,3 +24,8 @@ class TestPatch:
     def test_patch_raises_error(self, target, func, tb):
         with pytest.raises(AssertionError), tb.patch(target) as mock_obj:
             mock_obj.assert_called_once()
+
+    def test_patch_return_value(self, tb):
+        with tb.patch("os.listdir", return_value=['file1', 'file2']) as mock_listdir:
+            assert tb.ref("listdir")() == ['file1', 'file2']
+            mock_listdir.assert_called_once()
