@@ -14,7 +14,7 @@ from .exceptions import (
 from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
-from .utils import random_varname
+from .utils import random_varname, all_subclasses
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -105,8 +105,13 @@ class TestbookNotebookClient(NotebookClient):
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             except CellExecutionError as e:
-                # TODO: drop usage of eval
-                raise eval(e.ename)(e) from None
+                # Look for in-built Python exception
+                for klass in all_subclasses(Exception):
+                    if klass.__name__ == e.ename:
+                        raise klass(e)
+
+                raise
+
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
