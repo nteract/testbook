@@ -1,6 +1,7 @@
 import pytest
 
 from ..testbook import testbook
+from nbclient.exceptions import CellExecutionError
 
 
 @pytest.fixture(scope='module')
@@ -38,3 +39,9 @@ def test_testbook_with_execute(notebook):
 def test_testbook_with_execute_context_manager(notebook):
     notebook.execute_cell('execute_foo')
     assert notebook.cell_output_text('execute_foo') == 'foo'
+
+
+@testbook('testbook/tests/resources/exception.ipynb', execute=True)
+def test_raise_exception(tb):
+    with pytest.raises(CellExecutionError):
+        tb.ref("raise_my_exception")()

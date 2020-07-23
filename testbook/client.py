@@ -108,7 +108,7 @@ class TestbookNotebookClient(NotebookClient):
                 # Look for in-built Python exception
                 for klass in all_subclasses(Exception):
                     if klass.__name__ == e.ename:
-                        raise klass(e)
+                        raise klass from e
 
                 raise
 
