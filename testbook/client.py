@@ -10,6 +10,7 @@ from .exceptions import (
     TestbookCellTagNotFoundError,
     TestbookExecuteResultNotFoundError,
     TestbookSerializeError,
+    TestbookRuntimeError,
 )
 from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
@@ -104,13 +105,15 @@ class TestbookNotebookClient(NotebookClient):
         for idx in cell_indexes:
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
-            except CellExecutionError as e:
+            except CellExecutionError as ce:
                 # Look for in-built Python exception
+                nbexception = None
                 for klass in all_subclasses(Exception):
-                    if klass.__name__ == e.ename:
-                        raise klass from e
+                    if klass.__name__ == ce.ename:
+                        nbexception = klass
+                        break
 
-                raise
+                raise TestbookRuntimeError(nbexception) from ce
 
             executed_cells.append(cell)
 

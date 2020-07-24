@@ -1,6 +1,7 @@
 import pytest
 
 from ..testbook import testbook
+from ..exceptions import TestbookRuntimeError
 
 
 @pytest.fixture(scope='module')

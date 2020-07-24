@@ -24,3 +24,8 @@ class TestbookExecuteResultNotFoundError(TestbookError):
 
 class TestbookAttributeError(AttributeError):
     pass
+
+
+class TestbookRuntimeError(TestbookError):
+    def __init__(self, nbexception):
+        self.nbexception = nbexception

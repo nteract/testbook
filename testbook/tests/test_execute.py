@@ -2,6 +2,7 @@ import pytest
 
 from ..testbook import testbook
 from nbclient.exceptions import CellExecutionError
+from ..exceptions import TestbookRuntimeError
 
 
 @pytest.fixture(scope='module')
@@ -27,8 +28,12 @@ def test_execute_cell_tags(notebook):
 
 
 def test_execute_cell_raises_error(notebook):
-    with pytest.raises(ZeroDivisionError):
-        notebook.inject("1/0", pop=True)
+    with pytest.raises(TestbookRuntimeError):
+        try:
+            notebook.inject("1/0", pop=True)
+        except TestbookRuntimeError as e:
+            assert e.nbexception == ZeroDivisionError
+            raise
 
 
 def test_testbook_with_execute(notebook):
