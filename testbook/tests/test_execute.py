@@ -28,12 +28,10 @@ def test_execute_cell_tags(notebook):
 
 
 def test_execute_cell_raises_error(notebook):
-    with pytest.raises(TestbookRuntimeError):
-        try:
-            notebook.inject("1/0", pop=True)
-        except TestbookRuntimeError as e:
-            assert e.nbexception == ZeroDivisionError
-            raise
+    try:
+        notebook.inject("1/0", pop=True)
+    except TestbookRuntimeError as e:
+        assert e.nbexception == ZeroDivisionError
 
 
 def test_testbook_with_execute(notebook):
@@ -48,5 +46,7 @@ def test_testbook_with_execute_context_manager(notebook):
 
 @testbook('testbook/tests/resources/exception.ipynb', execute=True)
 def test_raise_exception(tb):
-    with pytest.raises(CellExecutionError):
+    try:
         tb.ref("raise_my_exception")()
+    except TestbookRuntimeError as e:
+        assert e.nbexception == CellExecutionError

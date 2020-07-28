@@ -106,8 +106,7 @@ class TestbookNotebookClient(NotebookClient):
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             except CellExecutionError as ce:
-                # Look for in-built Python exception
-                nbexception = None
+                nbexception = CellExecutionError
                 for klass in all_subclasses(Exception):
                     if klass.__name__ == ce.ename:
                         nbexception = klass
@@ -243,7 +242,9 @@ class TestbookNotebookClient(NotebookClient):
             outputs = self.inject(inject_code, pop=True).outputs
             return outputs[0].data['application/json']['value']
 
-        except ValueError:
+        except TestbookRuntimeError as te:
+            if te.nbexception is not ValueError:
+                raise
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
