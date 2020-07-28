@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from inspect import getsource
 from textwrap import dedent
 from typing import Any, Dict, List, Optional, Union
@@ -28,7 +29,7 @@ class TestbookNotebookClient(NotebookClient):
         """
 
         # Check if exists
-        self.inject(name)
+        self.inject(name, pop=True)
         return TestbookObjectReference(self, name)
 
     @staticmethod
@@ -235,6 +236,9 @@ class TestbookNotebookClient(NotebookClient):
         inject_code = f"""
             {save_varname} = _
 
+            import json
+            json.dumps(_)
+
             from IPython.display import JSON
             JSON({{"value" : _}})
         """
@@ -243,10 +247,52 @@ class TestbookNotebookClient(NotebookClient):
             outputs = self.inject(inject_code, pop=True).outputs
             return outputs[0].data['application/json']['value']
 
-        except ValueError:
+        except (ValueError, TypeError):
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
 
     def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
         return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
+
+    @contextmanager
+    def patch(self, target, **kwargs):
+        mock_object = f'_mock_{random_varname()}'
+        patcher = f'_patcher_{random_varname()}'
+
+        self.inject(
+            f"""
+            from unittest.mock import patch
+            {patcher} = patch(
+                {PythonTranslator.translate(target)},
+                **{PythonTranslator.translate(kwargs)}
+            )
+            {mock_object} = {patcher}.start()
+        """
+        )
+
+        yield TestbookObjectReference(self, mock_object)
+
+        self.inject(f"{patcher}.stop()")
+
+    @contextmanager
+    def patch_dict(self, in_dict, values=(), clear=False, **kwargs):
+        mock_object = f'_mock_{random_varname()}'
+        patcher = f'_patcher_{random_varname()}'
+
+        self.inject(
+            f"""
+            from unittest.mock import patch
+            {patcher} = patch.dict(
+                {PythonTranslator.translate(in_dict)},
+                {PythonTranslator.translate(values)},
+                {PythonTranslator.translate(clear)},
+                **{PythonTranslator.translate(kwargs)}
+            )
+            {mock_object} = {patcher}.start()
+        """
+        )
+
+        yield TestbookObjectReference(self, mock_object)
+
+        self.inject(f"{patcher}.stop()")
