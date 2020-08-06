@@ -32,7 +32,7 @@ def test_execute_cell_raises_error(notebook):
         try:
             notebook.inject("1/0", pop=True)
         except TestbookRuntimeError as e:
-            assert e.nbexception == ZeroDivisionError
+            assert e.eclass == ZeroDivisionError
             raise
 
 
@@ -48,5 +48,5 @@ def test_testbook_with_execute_context_manager(notebook):
 
 @testbook('testbook/tests/resources/exception.ipynb', execute=True)
 def test_raise_exception(tb):
-    with pytest.raises(CellExecutionError):
+    with pytest.raises(TestbookRuntimeError):
         tb.ref("raise_my_exception")()

@@ -1,4 +1,5 @@
 from ..testbook import testbook
+from ..exceptions import TestbookRuntimeError
 
 import pytest
 
@@ -22,7 +23,7 @@ class TestPatch:
         "target, func", [("os.listdir", "listdir"), ("os.popen", "get_branch")]
     )
     def test_patch_raises_error(self, target, func, tb):
-        with pytest.raises(AssertionError), tb.patch(target) as mock_obj:
+        with pytest.raises(TestbookRuntimeError), tb.patch(target) as mock_obj:
             mock_obj.assert_called_once()
 
     def test_patch_return_value(self, tb):

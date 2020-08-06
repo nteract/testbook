@@ -26,6 +26,15 @@ class TestbookAttributeError(AttributeError):
     pass
 
 
-class TestbookRuntimeError(TestbookError):
-    def __init__(self, nbexception):
-        self.nbexception = nbexception
+class TestbookRuntimeError(RuntimeError):
+    def __init__(self, evalue, traceback, eclass=None):
+        super().__init__(evalue)
+        self.evalue = evalue
+        self.traceback = traceback
+        self.eclass = eclass
+
+    def __str__(self):  # pragma: no cover
+        return str(self.traceback)
+
+    def __repr__(self):  # pragma: no cover
+        return str(self.traceback)
