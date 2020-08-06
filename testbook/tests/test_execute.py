@@ -1,7 +1,6 @@
 import pytest
 
 from ..testbook import testbook
-from nbclient.exceptions import CellExecutionError
 from ..exceptions import TestbookRuntimeError
 
 
