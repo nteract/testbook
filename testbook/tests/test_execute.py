@@ -1,6 +1,7 @@
 import pytest
 
 from ..testbook import testbook
+from ..exceptions import TestbookRuntimeError
 
 
 @pytest.fixture(scope='module')
@@ -26,8 +27,12 @@ def test_execute_cell_tags(notebook):
 
 
 def test_execute_cell_raises_error(notebook):
-    with pytest.raises(ZeroDivisionError):
-        notebook.inject("1/0", pop=True)
+    with pytest.raises(TestbookRuntimeError):
+        try:
+            notebook.inject("1/0", pop=True)
+        except TestbookRuntimeError as e:
+            assert e.eclass == ZeroDivisionError
+            raise
 
 
 def test_testbook_with_execute(notebook):
@@ -38,3 +43,9 @@ def test_testbook_with_execute(notebook):
 def test_testbook_with_execute_context_manager(notebook):
     notebook.execute_cell('execute_foo')
     assert notebook.cell_output_text('execute_foo') == 'foo'
+
+
+@testbook('testbook/tests/resources/exception.ipynb', execute=True)
+def test_raise_exception(tb):
+    with pytest.raises(TestbookRuntimeError):
+        tb.ref("raise_my_exception")()

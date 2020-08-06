@@ -11,11 +11,12 @@ from .exceptions import (
     TestbookCellTagNotFoundError,
     TestbookExecuteResultNotFoundError,
     TestbookSerializeError,
+    TestbookRuntimeError,
 )
 from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
 from .translators import PythonTranslator
-from .utils import random_varname
+from .utils import random_varname, all_subclasses
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -105,9 +106,16 @@ class TestbookNotebookClient(NotebookClient):
         for idx in cell_indexes:
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
-            except CellExecutionError as e:
-                # TODO: drop usage of eval
-                raise eval(e.ename)(e) from None
+            except CellExecutionError as ce:
+                # Look for in-built Python exception
+                eclass = None
+                for klass in all_subclasses(Exception):
+                    if klass.__name__ == ce.ename:
+                        eclass = klass
+                        break
+
+                raise TestbookRuntimeError(ce.evalue, ce, eclass)
+
             executed_cells.append(cell)
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
@@ -239,7 +247,7 @@ class TestbookNotebookClient(NotebookClient):
             outputs = self.inject(inject_code, pop=True).outputs
             return outputs[0].data['application/json']['value']
 
-        except (ValueError, TypeError):
+        except TestbookRuntimeError:
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
