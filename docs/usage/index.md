@@ -58,6 +58,8 @@ You may also choose to execute all or some cells:
 
 - Pass `execute=['cell1', 'cell2']` or `execute='cell1'` to only execute the specified cell(s) before the test.
 
+- Pass `execute=slice('start-cell', 'end-cell')` or `execute=range(2, 10)` to execute all cells in the specified range.
+
 ## Obtain references to objects present in notebook
 
 ### Testing functions in Jupyter Notebook
@@ -161,6 +163,42 @@ def test_bar(tb):
 
 ```{warning}
 Note that since the kernel is being shared in case of module scoped fixtures, you might run into weird state issues. Please keep in mind that changes made to an object in one test will reflect in other tests too. This will likely be fixed in future versions of testbook.
+```
+
+## Support for patching objects
+
+Use the `patch` and `patch_dict` contextmanager to patch out objects during unit test. Learn more about how to use `patch` [here](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.patch).
+
+**Example usage of `patch`:**
+
+```{code-cell} ipython3
+def foo():
+    bar()
+```
+
+```{code-block} python
+@testbook('/path/to/notebook.ipynb', execute=True)
+def test_method(tb):
+    with tb.patch('__main__.bar') as mock_bar:
+        foo = tb.ref("foo")
+        foo()
+
+        mock_bar.assert_called_once()
+```
+
+**Example usage of `patch_dict`:**
+
+```{code-cell} ipython3
+my_dict = {'hello': 'world'}
+```
+
+```{code-block} python
+@testbook('/path/to/notebook.ipynb', execute=True)
+def test_my_dict(tb):
+    with tb.patch('__main__.my_dict', {'hello' : 'new world'}) as mock_my_dict:
+        my_dict = tb.ref("my_dict")
+        assert my_dict == {'hello' : 'new world'}
+
 ```
 
 [fixture]: https://docs.pytest.org/en/stable/fixture.html#scope-sharing-a-fixture-instance-across-tests-in-a-class-module-or-session

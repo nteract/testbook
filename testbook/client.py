@@ -259,6 +259,7 @@ class TestbookNotebookClient(NotebookClient):
 
     @contextmanager
     def patch(self, target, **kwargs):
+        """Used as contextmanager to patch objects in the kernel"""
         mock_object = f'_mock_{random_varname()}'
         patcher = f'_patcher_{random_varname()}'
 
@@ -279,6 +280,7 @@ class TestbookNotebookClient(NotebookClient):
 
     @contextmanager
     def patch_dict(self, in_dict, values=(), clear=False, **kwargs):
+        """Used as contextmanager to patch dictionaries in the kernel"""
         mock_object = f'_mock_{random_varname()}'
         patcher = f'_patcher_{random_varname()}'
 
