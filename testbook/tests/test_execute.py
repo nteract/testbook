@@ -54,7 +54,7 @@ def test_testbook_range():
         assert tb.code_cells_executed == 4
 
 
-@pytest.mark.parametrize("slice_params, expected_result", [(('hello', 'str'), 5), ((2, 5), 3),])
+@pytest.mark.parametrize("slice_params, expected_result", [(('hello', 'str'), 6), ((2, 5), 4)])
 def test_testbook_slice(slice_params, expected_result):
     with testbook('testbook/tests/resources/inject.ipynb') as tb:
         tb.execute_cell(slice(*slice_params))
