@@ -93,8 +93,10 @@ class TestbookNotebookClient(NotebookClient):
         """
         Executes a cell or list of cells
         """
-
-        if not isinstance(cell, list):
+        if isinstance(cell, slice):
+            start, stop = self._cell_index(cell.start), self._cell_index(cell.stop)
+            cell = range(start, stop + 1)
+        elif isinstance(cell, str) or isinstance(cell, int):
             cell = [cell]
 
         cell_indexes = cell
