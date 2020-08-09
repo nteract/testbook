@@ -55,6 +55,7 @@ def test_func(tb):
 - Write conventional unit tests for Jupyter Notebooks
 - [Execute all or some specific cells before unit test](usage/index.html#using-execute-to-control-which-cells-are-executed-before-test)
 - [Share kernel context across multiple tests](usage/index.html#share-kernel-context-across-multiple-tests) (using pytest fixtures)
+- [Support for patching objects](usage/index.html#support-for-patching-objects)
 - Inject code into Jupyter notebooks
 - Works with any unit testing library - unittest, pytest or nose
 
