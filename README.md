@@ -1,16 +1,13 @@
 [![Build Status](https://github.com/nteract/testbook/workflows/CI/badge.svg)](https://github.com/nteract/testbook/actions)
 [![image](https://codecov.io/github/nteract/testbook/coverage.svg?branch=master)](https://codecov.io/github/nteract/testbook?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/test-book/badge/?version=latest)](https://test-book.readthedocs.io/en/latest/?badge=latest)
-[![PyPI](https://img.shields.io/pypi/v/nteract-testbook.svg)](https://pypi.org/project/nteract-testbook/)
+[![PyPI](https://img.shields.io/pypi/v/testbook.svg)](https://pypi.org/project/testbook/)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 # testbook
-
-**WARNING:** This is the old package name `nteract-testbook` -- please install `testbook` in the
-future as no new releases are going out for this old package name.
 
 **testbook** is a unit testing framework extension for testing code in Jupyter Notebooks.
 
@@ -46,7 +43,7 @@ def test_func(tb):
 ## Installing `testbook`
 
 ```{code-block} bash
-pip install nteract-testbook
+pip install testbook
 ```
 
 ## Documentation

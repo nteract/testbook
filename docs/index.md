@@ -80,5 +80,5 @@ changelog.md
 [codecov-badge]: https://codecov.io/gh/nteract/testbook/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/nteract/testbook
 [github-badge]: https://img.shields.io/github/stars/nteract/testbook?label=github
-[pypi-badge]: https://img.shields.io/pypi/v/nteract-testbook.svg
-[pypi-link]: https://pypi.org/project/nteract-testbook/
+[pypi-badge]: https://img.shields.io/pypi/v/testbook.svg
+[pypi-link]: https://pypi.org/project/testbook/
