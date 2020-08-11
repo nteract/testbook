@@ -11,3 +11,7 @@
 ## 0.1.2
 
 - Updated docs link in setup.py
+
+## 0.1.3
+
+- Added warning about package name change
