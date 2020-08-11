@@ -8,6 +8,9 @@
 
 # testbook
 
+**WARNING:** This is the old package name `nteract-testbook` -- please install `testbook` in the
+future as no new releases are going out for this old package name.
+
 **testbook** is a unit testing framework extension for testing code in Jupyter Notebooks.
 
 Previous attempts at unit testing notebooks involved writing the tests in the notebook itself.
