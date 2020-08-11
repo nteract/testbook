@@ -17,7 +17,7 @@ kernelspec:
 ## Installing `testbook`
 
 ```{code-block} bash
-pip install nteract-testbook
+pip install testbook
 ```
 
 ## Create your first test
