@@ -1,7 +1,7 @@
 import pytest
 
 from ..testbook import testbook
-from ..exceptions import TestbookRuntimeError
+from ..exceptions import TestbookRuntimeError, TestbookError
 
 
 @pytest.fixture(scope='module')
@@ -62,6 +62,12 @@ def test_testbook_slice(slice_params, expected_result):
 
     with testbook('testbook/tests/resources/inject.ipynb', execute=slice(*slice_params)) as tb:
         assert tb.code_cells_executed == expected_result
+
+
+def test_testbook_slice_raises_error():
+    with pytest.raises(TestbookError):
+        with testbook('testbook/tests/resources/inject.ipynb', execute=slice(3, 1, -1)):
+            pass
 
 
 @testbook('testbook/tests/resources/exception.ipynb', execute=True)

@@ -12,6 +12,7 @@ from .exceptions import (
     TestbookExecuteResultNotFoundError,
     TestbookSerializeError,
     TestbookRuntimeError,
+    TestbookError,
 )
 from .reference import TestbookObjectReference
 from .testbooknode import TestbookNode
@@ -95,6 +96,9 @@ class TestbookNotebookClient(NotebookClient):
         """
         if isinstance(cell, slice):
             start, stop = self._cell_index(cell.start), self._cell_index(cell.stop)
+            if cell.step is not None:
+                raise TestbookError('testbook does not support step argument')
+
             cell = range(start, stop + 1)
         elif isinstance(cell, str) or isinstance(cell, int):
             cell = [cell]
