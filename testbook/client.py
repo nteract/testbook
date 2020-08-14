@@ -254,7 +254,9 @@ class TestbookNotebookClient(NotebookClient):
 
             if outputs[0].output_type == "error":
                 # will receive error when `allow_errors` is set to True
-                raise RuntimeError('serialize error')
+                raise TestbookRuntimeError(
+                    outputs[0].evalue, outputs[0].traceback, outputs[0].ename
+                )
 
             return outputs[0].data['application/json']['value']
 
