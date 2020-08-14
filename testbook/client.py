@@ -260,7 +260,7 @@ class TestbookNotebookClient(NotebookClient):
 
             return outputs[0].data['application/json']['value']
 
-        except (TestbookRuntimeError, RuntimeError):
+        except TestbookRuntimeError:
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
