@@ -4,15 +4,15 @@ from .client import TestbookNotebookClient
 
 
 class testbook:
-    def __init__(self, nb_path, execute=None, timeout=60):
+    def __init__(self, nb_path, execute=None, timeout=60, allow_errors=False):
         self.nb_path = nb_path
         self.execute = execute
         self.timeout = timeout
-
+        self.allow_errors = allow_errors
         with open(self.nb_path) as f:
             nb = nbformat.read(f, as_version=4)
 
-        self.client = TestbookNotebookClient(nb, timeout=self.timeout)
+        self.client = TestbookNotebookClient(nb, timeout=self.timeout, allow_errors=allow_errors)
 
     def _prepare(self):
         if self.execute is True:

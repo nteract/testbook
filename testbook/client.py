@@ -251,6 +251,13 @@ class TestbookNotebookClient(NotebookClient):
 
         try:
             outputs = self.inject(inject_code, pop=True).outputs
+
+            if outputs[0].output_type == "error":
+                # will receive error when `allow_errors` is set to True
+                raise TestbookRuntimeError(
+                    outputs[0].evalue, outputs[0].traceback, outputs[0].ename
+                )
+
             return outputs[0].data['application/json']['value']
 
         except TestbookRuntimeError:
