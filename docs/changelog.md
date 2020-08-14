@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Added support for `allow_errors`
+
 ## 0.2.0
 
 - Changed to new package name `testbook`
