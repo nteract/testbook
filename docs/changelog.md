@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Added support for passing notebook as file-like object or path as str
+
 ## 0.2.1
 
 - Added support for `allow_errors`
