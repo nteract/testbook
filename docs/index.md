@@ -76,7 +76,7 @@ changelog.md
 [github-ci-link]: https://github.com/nteract/testbook/actions
 [github-link]: https://github.com/nteract/testbook
 [rtd-badge]: https://readthedocs.org/projects/testbook/badge/?version=latest
-[rtd-link]: https://test-book.readthedocs.io/en/latest/?badge=latest
+[rtd-link]: https://testbook.readthedocs.io/en/latest/?badge=latest
 [codecov-badge]: https://codecov.io/gh/nteract/testbook/branch/master/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/nteract/testbook
 [github-badge]: https://img.shields.io/github/stars/nteract/testbook?label=github
