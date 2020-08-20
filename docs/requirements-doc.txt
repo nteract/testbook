@@ -1,6 +1,6 @@
-Sphinx>=1.7
+Sphinx>=1.7,<3.0
 sphinx-book-theme
 mock
 moto
-myst-parser
-myst-nb
+myst-parser==0.9.1
+myst-nb==0.8.5
