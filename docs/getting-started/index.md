@@ -24,9 +24,7 @@ pip install testbook
 
 Consider the following code cell in a Jupyter Notebook,
 
-```{code-cell} ipython3
-:tags: [hide-output]
-
+```{code-block} python
 def foo(x):
     return x + 1
 ```
