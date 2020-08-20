@@ -1,15 +1,3 @@
----
-jupytext:
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
----
-
 # Welcome to testbook
 
 [![Github-CI][github-badge]][github-link]
@@ -30,7 +18,7 @@ Here is an example of a unit test written using testbook
 
 Consider the following code cell in a Jupyter Notebook:
 
-```{code-cell} ipython3
+```{code-block} python
 def func(a, b):
    return a + b
 ```

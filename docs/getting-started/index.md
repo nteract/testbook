@@ -1,15 +1,3 @@
----
-jupytext:
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
----
-
 # Installation and Getting Started
 
 `testbook` is a unit testing framework for testing code in Jupyter Notebooks.
@@ -24,9 +12,7 @@ pip install testbook
 
 Consider the following code cell in a Jupyter Notebook,
 
-```{code-cell} ipython3
-:tags: [hide-output]
-
+```{code-block} python
 def foo(x):
     return x + 1
 ```

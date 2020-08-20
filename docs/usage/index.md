@@ -1,15 +1,3 @@
----
-jupytext:
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
----
-
 # Usage
 
 The motivation behind creating testbook was to be able to write conventional unit tests for Jupyter Notebooks.
@@ -66,7 +54,7 @@ You may also choose to execute all or some cells:
 
 Consider the following code cell in a Jupyter Notebook:
 
-```{code-cell} ipython3
+```{code-block} python
 def foo(name):
     return f"You passed {name}!"
 
@@ -95,7 +83,7 @@ def test_foo(tb):
 
 Consider the following code cell in a Jupyter Notebook:
 
-```{code-cell} ipython3
+```{code-block} python
 class Foo:
     def __init__(self):
         self.name = name
@@ -123,12 +111,12 @@ It can be done by setting up a [module or package scoped pytest fixture][fixture
 
 Consider the code cells below,
 
-```{code-cell} ipython3
+```{code-block} python
 def foo(a, b):
     return a + b
 ```
 
-```{code-cell} ipython3
+```{code-block} python
 def bar(a):
     return [x*2 for x in a]
 ```
@@ -171,7 +159,7 @@ Use the `patch` and `patch_dict` contextmanager to patch out objects during unit
 
 **Example usage of `patch`:**
 
-```{code-cell} ipython3
+```{code-block} python
 def foo():
     bar()
 ```
@@ -188,7 +176,7 @@ def test_method(tb):
 
 **Example usage of `patch_dict`:**
 
-```{code-cell} ipython3
+```{code-block} python
 my_dict = {'hello': 'world'}
 ```
 
