@@ -7,7 +7,9 @@ class testbook:
     def __init__(self, nb, execute=None, timeout=60, allow_errors=False):
         self.execute = execute
         self.client = TestbookNotebookClient(
-            nbformat.read(nb, as_version=4), timeout=timeout, allow_errors=allow_errors
+            nbformat.read(nb, as_version=4) if not isinstance(nb, nbformat.NotebookNode) else nb,
+            timeout=timeout,
+            allow_errors=allow_errors
         )
 
     def _prepare(self):
