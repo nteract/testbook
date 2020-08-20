@@ -1,3 +1,4 @@
+import nbformat
 from ..testbook import testbook
 
 
@@ -40,3 +41,10 @@ def test_testbook_with_file_object():
         assert tb.code_cells_executed == 0
 
     f.close()
+
+
+def test_testbook_with_notebook_node():
+    nb = nbformat.read('testbook/tests/resources/inject.ipynb', as_version=4)
+
+    with testbook(nb) as tb:
+        assert tb.code_cells_executed == 0
