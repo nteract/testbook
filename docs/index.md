@@ -56,6 +56,7 @@ def test_func(tb):
 
 getting-started/index.md
 usage/index.md
+examples/index.md
 reference/index.rst
 changelog.md
 ```
