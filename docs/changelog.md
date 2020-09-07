@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3
+
+- Accept notebook node as argument to testbook
+- Added support for specifying kernel with `kernel_name` kwarg
+
 ## 0.2.2
 
 - Added support for passing notebook as file-like object or path as str
