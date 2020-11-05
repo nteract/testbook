@@ -57,7 +57,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/nteract/testbook',
     packages=['testbook'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=requirements,
     extras_require=extras_require,
     project_urls={
