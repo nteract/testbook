@@ -1,5 +1,11 @@
 import nbformat
 
+try:
+    from pytest import fixture
+except ImportError:
+    def fixture(func, *args, **kwargs):
+        return func
+
 from .client import TestbookNotebookClient
 
 
@@ -36,4 +42,4 @@ class testbook:
         wrapper.__name__ = func.__name__
         wrapper.__doc__ = func.__doc__
 
-        return wrapper
+        return fixture(wrapper)
