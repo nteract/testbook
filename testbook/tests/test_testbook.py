@@ -1,4 +1,7 @@
 import nbformat
+
+import pytest
+
 from ..testbook import testbook
 
 
@@ -16,6 +19,17 @@ def test_testbook_class_decorator(tb):
 @testbook('testbook/tests/resources/inject.ipynb')
 def test_testbook_class_decorator_execute_none(tb):
     assert tb.code_cells_executed == 0
+
+
+@testbook('testbook/tests/resources/inject.ipynb', execute=True)
+def test_testbook_decorator_with_fixture(nb, tmp_path):
+    assert True  # Check that the decorator accept to be passed along side a fixture
+
+
+@testbook('testbook/tests/resources/inject.ipynb', execute=True)
+@pytest.mark.parametrize("cell_index_args, expected_result", [(2, 2), ('hello', 1)])
+def test_testbook_decorator_with_markers(nb, cell_index_args, expected_result):
+    assert nb._cell_index(cell_index_args) == expected_result
 
 
 def test_testbook_execute_all_cells_context_manager():
