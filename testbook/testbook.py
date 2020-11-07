@@ -2,7 +2,7 @@ import nbformat
 
 try:
     from pytest import fixture
-except ImportError:
+except ImportError:  # pragma: no cover
     def fixture(func, *args, **kwargs):
         return func
 
@@ -34,7 +34,7 @@ class testbook:
         self.client._cleanup_kernel()
 
     def __call__(self, func):
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs):  # pragma: no cover
             with self.client.setup_kernel():
                 self._prepare()
                 func(self.client, *args, **kwargs)
