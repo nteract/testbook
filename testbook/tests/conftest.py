@@ -12,7 +12,7 @@ def notebook_factory():
 
     def notebook_generator(cells: Optional[List[NotebookNode]] = None) -> NotebookNode:
         """Generate an executable notebook.
-        
+
         The notebook cells are the one passed as arguments or the hard-coded cells
         if no cells is provided.
         """
