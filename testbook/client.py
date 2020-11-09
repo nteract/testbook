@@ -154,7 +154,7 @@ class TestbookNotebookClient(NotebookClient):
 
         Parameters
         ----------
-        cell : int or str 
+        cell : int or str
             The index or tag to look for
 
         Returns
