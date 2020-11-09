@@ -42,9 +42,7 @@ def test_value(var_name, expected_result, notebook):
     assert notebook.value(var_name) == expected_result
 
 
-@pytest.mark.parametrize(
-    "code", [('sample_int *= 2'), ('print(sample_int)'), ('')],
-)
+@pytest.mark.parametrize("code", [('sample_int *= 2'), ('print(sample_int)'), ('')])
 def test_value_raises_error(code, notebook):
     with pytest.raises(TestbookExecuteResultNotFoundError):
         notebook.value(code)
@@ -63,7 +61,7 @@ def test_value_raises_error(code, notebook):
                         "name": "stdout",
                         "output_type": "stream",
                         "text": "hello world\n" "foo\n" "bar\n",
-                    },
+                    }
                 ],
             },
             """
@@ -85,3 +83,31 @@ def test_output_text(cell, expected_result):
 def test_output_text_raises_error(cell):
     with pytest.raises(ValueError):
         assert TestbookNotebookClient._output_text(cell)
+
+
+def test_cell_execute_results_index(notebook_factory):
+    nb = notebook_factory()
+    with testbook(nb, execute="test") as tb:
+        assert tb.cell_execute_results(1) == [{"text/plain": "22"}]
+        assert tb.cell_execute_results(2) == [{"text/plain": "text"}]
+
+
+def test_cell_execute_results_tag(notebook_factory):
+    nb = notebook_factory()
+    with testbook(nb, execute="test") as tb:
+        assert tb.cell_execute_results("test") == [{"text/plain": "22"}]
+        assert tb.cell_execute_results("dummy-outputs") == [{"text/plain": "text"}]
+
+
+def test_cell_execute_results_indexerror(notebook_factory):
+    nb = notebook_factory([])
+    with testbook(nb) as tb:
+        with pytest.raises(IndexError):
+            tb.cell_execute_results(1)
+
+
+def test_cell_execute_results_tagnotfound(notebook_factory):
+    nb = notebook_factory([])
+    with testbook(nb) as tb:
+        with pytest.raises(TestbookCellTagNotFoundError):
+            tb.cell_execute_results("test")
