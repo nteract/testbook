@@ -174,7 +174,6 @@ class TestbookNotebookClient(NotebookClient):
             cell_index = self._cell_index(cell)
 
         return self._execute_result(self.nb['cells'][cell_index])
-        
 
     def inject(
         self,

@@ -41,7 +41,6 @@ def notebook_factory():
                 ),
             ]
 
-
         return new_notebook(metadata=metadata, cells=all_cells)
 
     return notebook_generator
