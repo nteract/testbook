@@ -138,12 +138,35 @@ class TestbookNotebookClient(NotebookClient):
         """
         Return cell text output
         """
-
-        cell_index = cell
-        if isinstance(cell, str):
-            cell_index = self._cell_index(cell)
-
+        cell_index = self._cell_index(cell)
         return self._output_text(self.nb['cells'][cell_index])
+
+    def cell_execute_result(self, cell: Union[int, str]) -> List[Dict[str, Any]]:
+        """Return the execute results of cell at a given index or with a given tag.
+
+        Each result is expressed with a dictionary for which the key is the mimetype
+        of the data. A same result can have different representation corresponding to
+        different mimetype.
+
+        Parameters
+        ----------
+        cell : int or str
+            The index or tag to look for
+
+        Returns
+        -------
+        List[Dict[str, Any]]
+            The execute results
+
+        Raises
+        ------
+        IndexError
+            If index is invalid
+        TestbookCellTagNotFoundError
+            If tag is not found
+        """
+        cell_index = self._cell_index(cell)
+        return self._execute_result(self.nb['cells'][cell_index])
 
     def inject(
         self,
