@@ -85,29 +85,29 @@ def test_output_text_raises_error(cell):
         assert TestbookNotebookClient._output_text(cell)
 
 
-def test_cell_execute_results_index(notebook_factory):
+def test_cell_execute_result_index(notebook_factory):
     nb = notebook_factory()
     with testbook(nb, execute="test") as tb:
-        assert tb.cell_execute_results(1) == [{"text/plain": "22"}]
-        assert tb.cell_execute_results(2) == [{"text/plain": "text"}]
+        assert tb.cell_execute_result(1) == [{"text/plain": "22"}]
+        assert tb.cell_execute_result(2) == [{"text/plain": "text"}]
 
 
-def test_cell_execute_results_tag(notebook_factory):
+def test_cell_execute_result_tag(notebook_factory):
     nb = notebook_factory()
     with testbook(nb, execute="test") as tb:
-        assert tb.cell_execute_results("test") == [{"text/plain": "22"}]
-        assert tb.cell_execute_results("dummy-outputs") == [{"text/plain": "text"}]
+        assert tb.cell_execute_result("test") == [{"text/plain": "22"}]
+        assert tb.cell_execute_result("dummy-outputs") == [{"text/plain": "text"}]
 
 
-def test_cell_execute_results_indexerror(notebook_factory):
+def test_cell_execute_result_indexerror(notebook_factory):
     nb = notebook_factory([])
     with testbook(nb) as tb:
         with pytest.raises(IndexError):
-            tb.cell_execute_results(1)
+            tb.cell_execute_result(1)
 
 
-def test_cell_execute_results_tagnotfound(notebook_factory):
+def test_cell_execute_result_tagnotfound(notebook_factory):
     nb = notebook_factory([])
     with testbook(nb) as tb:
         with pytest.raises(TestbookCellTagNotFoundError):
-            tb.cell_execute_results("test")
+            tb.cell_execute_result("test")
