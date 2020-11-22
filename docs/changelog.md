@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4
+
+- Add `cell_execute_result` to `TestbookNotebookClient`
+- Use testbook decorator with pytest fixture and marker
+
 ## 0.2.3
 
 - Accept notebook node as argument to testbook
