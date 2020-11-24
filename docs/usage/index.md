@@ -18,7 +18,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
    from testbook import testbook
 
-   @testbook.testbook('/path/to/notebook.ipynb', execute=True)
+   @testbook('/path/to/notebook.ipynb', execute=True)
    def test_func(tb):
        func = tb.ref("func")
 
