@@ -1,11 +1,5 @@
 import nbformat
 
-try:
-    from pytest import fixture
-except ImportError:  # pragma: no cover
-    def fixture(func, *args, **kwargs):
-        return func
-
 from .client import TestbookNotebookClient
 
 
@@ -34,7 +28,7 @@ class testbook:
         self.client._cleanup_kernel()
 
     def __call__(self, func):
-        def wrapper(*args, **kwargs):  # pragma: no cover
+        def wrapper(*args, **kwargs):
             with self.client.setup_kernel():
                 self._prepare()
                 func(self.client, *args, **kwargs)
@@ -42,4 +36,4 @@ class testbook:
         wrapper.__name__ = func.__name__
         wrapper.__doc__ = func.__doc__
 
-        return fixture(wrapper)
+        return wrapper
