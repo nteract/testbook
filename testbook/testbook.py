@@ -8,7 +8,7 @@ from .client import TestbookNotebookClient
 
 class testbook:
     """`testbook` acts as function decorator or a context manager.
-    
+
     When the function/with statement exits the kernels started when
     entering the function/with statement will be terminated.
 
@@ -16,7 +16,7 @@ class testbook:
     will be passed as first argument to the decorated function.
     """
     # Developer notes:
-    # 
+    #
     # To trick pytest, we mimic the API of unittest.mock.patch in testbook.
     # Notably, the following elements are added:
     # * attribute_name, Class attribute (see below)
