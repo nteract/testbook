@@ -10,13 +10,14 @@ from .client import TestbookNotebookClient
 
 
 class testbook:
-    def __init__(self, nb, execute=None, timeout=60, kernel_name='python3', allow_errors=False):
+    def __init__(self, nb, execute=None, timeout=60, kernel_name='python3', allow_errors=False, **kwargs):
         self.execute = execute
         self.client = TestbookNotebookClient(
             nbformat.read(nb, as_version=4) if not isinstance(nb, nbformat.NotebookNode) else nb,
             timeout=timeout,
             allow_errors=allow_errors,
-            kernel_name=kernel_name
+            kernel_name=kernel_name,
+            **kwargs
         )
 
     def _prepare(self):
