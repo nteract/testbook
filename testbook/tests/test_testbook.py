@@ -32,6 +32,12 @@ def test_testbook_decorator_with_markers(nb, cell_index_args, expected_result):
     assert nb._cell_index(cell_index_args) == expected_result
 
 
+@pytest.mark.parametrize("cell_index_args, expected_result", [(2, 2), ('hello', 1)])
+@testbook('testbook/tests/resources/inject.ipynb', execute=True)
+def test_testbook_decorator_with_markers_order_does_not_matter(nb, cell_index_args, expected_result):
+    assert nb._cell_index(cell_index_args) == expected_result
+
+
 def test_testbook_execute_all_cells_context_manager():
     with testbook('testbook/tests/resources/inject.ipynb', execute=True) as tb:
         for cell in tb.cells[:-1]:
