@@ -3,14 +3,18 @@ import nbformat
 try:
     from pytest import fixture
 except ImportError:  # pragma: no cover
+
     def fixture(func, *args, **kwargs):
         return func
+
 
 from .client import TestbookNotebookClient
 
 
 class testbook:
-    def __init__(self, nb, execute=None, timeout=60, kernel_name='python3', allow_errors=False, **kwargs):
+    def __init__(
+        self, nb, execute=None, timeout=60, kernel_name='python3', allow_errors=False, **kwargs
+    ):
         self.execute = execute
         self.client = TestbookNotebookClient(
             nbformat.read(nb, as_version=4) if not isinstance(nb, nbformat.NotebookNode) else nb,
