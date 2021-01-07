@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5
+
+- Fixed testbook decorator.
+
 ## 0.2.4
 
 - Add `cell_execute_result` to `TestbookNotebookClient`
