@@ -15,7 +15,7 @@ class TestbookObjectReference:
         return self.tb.value(f"type({self.name}).__name__")
 
     def __repr__(self):
-        return self.tb.value(f"repr({self.name})")
+        return repr(self.tb.value(f"repr({self.name})"))
 
     def __getattr__(self, name):
         if self.tb.value(f"hasattr({self.name}, '{name}')"):
