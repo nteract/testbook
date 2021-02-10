@@ -74,3 +74,22 @@ def test_testbook_slice_raises_error():
 def test_raise_exception(tb):
     with pytest.raises(TestbookRuntimeError):
         tb.ref("raise_my_exception")()
+
+
+@testbook('testbook/tests/resources/inject.ipynb')
+def test_underscore(tb):
+    tb.inject(
+        """
+        _ = 20
+
+        def foo(x):
+            return x + 1
+    """,
+        run=False,
+    )
+
+    tb.execute()
+
+    foo = tb.ref("foo")
+
+    assert foo(2) == 3
