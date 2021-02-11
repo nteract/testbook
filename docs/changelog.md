@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.6
+
+- Fixed Python underscore (`_`) issue
+
 ## 0.2.5
 
 - Fixed testbook decorator.
