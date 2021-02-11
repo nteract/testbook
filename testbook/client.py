@@ -263,13 +263,14 @@ class TestbookNotebookClient(NotebookClient):
         save_varname = random_varname()
 
         inject_code = f"""
-            {save_varname} = _
-
             import json
-            json.dumps(_)
-
+            from IPython import get_ipython
             from IPython.display import JSON
-            JSON({{"value" : _}})
+
+            {save_varname} = get_ipython().last_execution_result.result
+
+            json.dumps({save_varname})
+            JSON({{"value" : {save_varname}}})
         """
 
         try:

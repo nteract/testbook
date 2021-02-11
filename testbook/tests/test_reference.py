@@ -12,7 +12,7 @@ def notebook():
 
 def test_create_reference(notebook):
     a = notebook.ref("a")
-    assert repr(a) == "[1, 2, 3]"
+    assert repr(a) == "'[1, 2, 3]'"
     assert a._type == 'list'
     assert a.resolve() == [1, 2, 3]
 
@@ -48,7 +48,7 @@ def test_reference(notebook):
     # a reference to that object instead
     f = Foo('bar')
 
-    assert repr(f) == "<Foo value='bar'>"
+    assert repr(f) == "\"<Foo value='bar'>\""
 
     # Valid attribute access
     assert f.say_hello
