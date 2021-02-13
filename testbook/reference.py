@@ -27,7 +27,9 @@ class TestbookObjectReference:
         raise TestbookAttributeError(f"'{self._type}' object has no attribute {name}")
 
     def __eq__(self, rhs):
-        return self.tb.value("{lhs} == {rhs}".format(lhs=self.name, rhs=PythonTranslator.translate(rhs)))
+        return self.tb.value(
+            "{lhs} == {rhs}".format(lhs=self.name, rhs=PythonTranslator.translate(rhs))
+        )
 
     def __len__(self):
         return self.tb.value(f"len({self.name})")
