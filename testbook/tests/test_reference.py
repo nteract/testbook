@@ -1,7 +1,7 @@
 import pytest
 
-from ..testbook import testbook
-from ..exceptions import TestbookAttributeError, TestbookSerializeError
+from testbook.testbook import testbook
+from testbook.exceptions import TestbookAttributeError, TestbookSerializeError
 
 
 @pytest.fixture(scope='module')
@@ -51,7 +51,7 @@ def test_reference(notebook):
     assert repr(f) == "\"<Foo value='bar'>\""
 
     # Valid attribute access
-    assert f.say_hello
+    assert f.say_hello()
 
     # Invalid attribute access
     with pytest.raises(TestbookAttributeError):

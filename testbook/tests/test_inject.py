@@ -1,6 +1,6 @@
 import pytest
 
-from ..testbook import testbook
+from testbook.testbook import testbook
 
 
 @pytest.fixture(scope='module')

@@ -1,7 +1,7 @@
 """Sourced from https://github.com/nteract/papermill/blob/master/papermill/tests/test_translators.py"""
 import pytest
 
-from .. import translators
+from testbook import translators
 
 
 class Foo:

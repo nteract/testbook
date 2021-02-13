@@ -1,9 +1,9 @@
 import pytest
 from textwrap import dedent
 
-from ..testbook import testbook
-from ..client import TestbookNotebookClient
-from ..exceptions import TestbookCellTagNotFoundError, TestbookExecuteResultNotFoundError
+from testbook.testbook import testbook
+from testbook.client import TestbookNotebookClient
+from testbook.exceptions import TestbookCellTagNotFoundError, TestbookExecuteResultNotFoundError
 
 
 @pytest.fixture(scope='module')

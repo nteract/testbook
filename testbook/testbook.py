@@ -4,7 +4,7 @@ from unittest.mock import DEFAULT
 import nbformat
 
 
-from .client import TestbookNotebookClient
+from testbook.client import TestbookNotebookClient
 
 
 class testbook:

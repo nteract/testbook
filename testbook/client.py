@@ -7,17 +7,17 @@ from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from .exceptions import (
+from testbook.exceptions import (
     TestbookCellTagNotFoundError,
     TestbookExecuteResultNotFoundError,
     TestbookSerializeError,
     TestbookRuntimeError,
     TestbookError,
 )
-from .reference import TestbookObjectReference
-from .testbooknode import TestbookNode
-from .translators import PythonTranslator
-from .utils import random_varname, all_subclasses
+from testbook.reference import TestbookObjectReference
+from testbook.testbooknode import TestbookNode
+from testbook.translators import PythonTranslator
+from testbook.utils import random_varname, all_subclasses
 
 
 class TestbookNotebookClient(NotebookClient):
@@ -288,9 +288,6 @@ class TestbookNotebookClient(NotebookClient):
             e = TestbookSerializeError('could not JSON serialize output')
             e.save_varname = save_varname
             raise e
-
-    def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
-        return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
 
     @contextmanager
     def patch(self, target, **kwargs):
