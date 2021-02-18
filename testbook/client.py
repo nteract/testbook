@@ -7,17 +7,17 @@ from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
 
-from testbook.exceptions import (
+from .exceptions import (
     TestbookCellTagNotFoundError,
     TestbookExecuteResultNotFoundError,
     TestbookSerializeError,
     TestbookRuntimeError,
     TestbookError,
 )
-from testbook.reference import TestbookObjectReference
-from testbook.testbooknode import TestbookNode
-from testbook.translators import PythonTranslator
-from testbook.utils import random_varname, all_subclasses
+from .reference import TestbookObjectReference
+from .testbooknode import TestbookNode
+from .translators import PythonTranslator
+from .utils import random_varname, all_subclasses
 
 
 class TestbookNotebookClient(NotebookClient):

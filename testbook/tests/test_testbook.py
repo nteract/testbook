@@ -2,7 +2,7 @@ import nbformat
 
 import pytest
 
-from testbook.testbook import testbook
+from ..testbook import testbook
 
 
 @testbook('testbook/tests/resources/inject.ipynb', execute=True)

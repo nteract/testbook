@@ -1,7 +1,7 @@
 import pytest
 
-from testbook.testbook import testbook
-from testbook.exceptions import TestbookAttributeError, TestbookSerializeError
+from ..testbook import testbook
+from ..exceptions import TestbookAttributeError, TestbookSerializeError
 
 
 @pytest.fixture(scope='module')

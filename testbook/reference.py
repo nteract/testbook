@@ -1,11 +1,11 @@
-from testbook.exceptions import (
+from .exceptions import (
     TestbookExecuteResultNotFoundError,
     TestbookAttributeError,
     TestbookSerializeError,
     TestbookRuntimeError
 )
-from testbook.utils import random_varname
-from testbook.translators import PythonTranslator
+from .utils import random_varname
+from .translators import PythonTranslator
 
 
 class TestbookObjectReference:
