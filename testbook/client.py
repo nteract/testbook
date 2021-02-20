@@ -289,9 +289,6 @@ class TestbookNotebookClient(NotebookClient):
             e.save_varname = save_varname
             raise e
 
-    def _eq_in_notebook(self, lhs: str, rhs: Any) -> bool:
-        return self.value("{lhs} == {rhs}".format(lhs=lhs, rhs=PythonTranslator.translate(rhs)))
-
     @contextmanager
     def patch(self, target, **kwargs):
         """Used as contextmanager to patch objects in the kernel"""
