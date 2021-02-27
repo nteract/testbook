@@ -46,6 +46,14 @@ def test_func(tb):
 pip install testbook
 ```
 
+NOTE: This does not install any kernels for running your notebooks. You'll need to install in the same way you do for running the notebooks normally. Usually this is done with `pip install ipykernel`
+
+Alternatively if you want all the same dev dependencies and the ipython kernel you can install these dependencies with:
+
+```{code-block} bash
+pip install testbook[dev]
+```
+
 ## Documentation
 
 See [readthedocs](https://testbook.readthedocs.io/en/latest/) for more in-depth details.
