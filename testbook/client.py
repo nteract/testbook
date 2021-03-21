@@ -21,7 +21,14 @@ from .utils import random_varname, all_subclasses
 
 
 class TestbookNotebookClient(NotebookClient):
+    __test__ = False
+
     def __init__(self, nb, km=None, **kw):
+        # Fix the ipykernel 5.5 issue where execute requests after errors are aborted
+        ea = kw.get('extra_arguments', [])
+        if not any(arg.startswith('--Kernel.stop_on_error_timeout') for arg in self.extra_arguments):
+            ea.append('--Kernel.stop_on_error_timeout=0')
+        kw['extra_arguments'] = ea
         super().__init__(nb, km=km, **kw)
 
     def ref(self, name: str) -> TestbookObjectReference:
