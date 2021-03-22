@@ -1,7 +1,6 @@
 class TestbookError(Exception):
     """Generic Testbook exception class"""
-
-    pass
+    __test__ = False
 
 
 class TestbookCellTagNotFoundError(TestbookError):
@@ -23,10 +22,12 @@ class TestbookExecuteResultNotFoundError(TestbookError):
 
 
 class TestbookAttributeError(AttributeError):
-    pass
+    __test__ = False
 
 
 class TestbookRuntimeError(RuntimeError):
+    __test__ = False
+
     def __init__(self, evalue, traceback, eclass=None):
         super().__init__(evalue)
         self.evalue = evalue
