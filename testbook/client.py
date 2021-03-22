@@ -40,6 +40,12 @@ class TestbookNotebookClient(NotebookClient):
         self.inject(name, pop=True)
         return TestbookObjectReference(self, name)
 
+    def get(self, item):
+        return self.ref(item)
+
+    def __getitem__(self, item):
+        return self.ref(item)
+
     @staticmethod
     def _construct_call_code(
         func_name: str, args: Optional[List] = None, kwargs: Optional[Dict] = None

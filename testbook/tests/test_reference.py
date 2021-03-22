@@ -17,6 +17,20 @@ def test_create_reference(notebook):
     assert a.resolve() == [1, 2, 3]
 
 
+def test_create_reference_getitem(notebook):
+    a = notebook["a"]
+    assert repr(a) == "'[1, 2, 3]'"
+    assert a._type == 'list'
+    assert a.resolve() == [1, 2, 3]
+
+
+def test_create_reference_get(notebook):
+    a = notebook.get("a")
+    assert repr(a) == "'[1, 2, 3]'"
+    assert a._type == 'list'
+    assert a.resolve() == [1, 2, 3]
+
+
 def test_eq_in_notebook(notebook):
     a = notebook.ref("a")
     a.append(4)
