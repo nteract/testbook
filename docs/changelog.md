@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+- Fixed issue which caused the Python underscore to interfere with testbook internal methods
+- Implemented container methods
+-- __len__
+-- __iter__
+-- __next__
+-- __getitem__
+-- __setitem__
+-- __contains__
+- Fixed testbook to work with ipykernel 5.5
+
 ## 0.2.6
 
 - Fixed Python underscore (`_`) issue
