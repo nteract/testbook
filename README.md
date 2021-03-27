@@ -29,11 +29,10 @@ def func(a, b):
 You would write a unit test using `testbook` in a Python file as follows:
 
 ```python
-import testbook
+from testbook import testbook
 
 
-
-@testbook.testbook('/path/to/notebook.ipynb', execute=True)
+@testbook('/path/to/notebook.ipynb', execute=True)
 def test_func(tb):
    func = tb.ref("func")
 
