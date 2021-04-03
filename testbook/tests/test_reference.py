@@ -12,31 +12,23 @@ def notebook():
 
 def test_create_reference(notebook):
     a = notebook.ref("a")
-    assert repr(a) == "'[1, 2, 3]'"
-    assert a._type == 'list'
-    assert a.resolve() == [1, 2, 3]
+    assert repr(a) == "[1, 2, 3]"
 
 
 def test_create_reference_getitem(notebook):
     a = notebook["a"]
-    assert repr(a) == "'[1, 2, 3]'"
-    assert a._type == 'list'
-    assert a.resolve() == [1, 2, 3]
+    assert repr(a) == "[1, 2, 3]"
 
 
 def test_create_reference_get(notebook):
     a = notebook.get("a")
-    assert repr(a) == "'[1, 2, 3]'"
-    assert a._type == 'list'
-    assert a.resolve() == [1, 2, 3]
+    assert repr(a) == "[1, 2, 3]"
 
 
 def test_eq_in_notebook(notebook):
     a = notebook.ref("a")
     a.append(4)
     assert a == [1, 2, 3, 4]
-
-    a.remove(4)
 
 
 def test_eq_in_notebook_ref(notebook):

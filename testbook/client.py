@@ -38,7 +38,11 @@ class TestbookNotebookClient(NotebookClient):
 
         # Check if exists
         self.inject(name, pop=True)
-        return TestbookObjectReference(self, name)
+        try:
+            self.inject(f"import json; json.dumps({name})", pop=True)
+            return self.value(name)
+        except Exception:
+            return TestbookObjectReference(self, name)
 
     def get(self, item):
         return self.ref(item)
