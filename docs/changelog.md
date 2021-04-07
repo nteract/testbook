@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Testbook now returns actual object for JSON serializable objects. Please nnote that this may break tests written with prior versions. 
+
 ## 0.3.0
 
 - Fixed issue which caused the Python underscore to interfere with testbook internal methods
