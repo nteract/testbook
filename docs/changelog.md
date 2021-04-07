@@ -2,7 +2,7 @@
 
 ## 0.4.0
 
-- Testbook now returns actual object for JSON serializable objects. Please nnote that this may break tests written with prior versions. 
+- Testbook now returns actual object for JSON serializable objects instead of reference objects. Please note that this may break tests written with prior versions. 
 
 ## 0.3.0
 
