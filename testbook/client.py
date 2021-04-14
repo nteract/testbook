@@ -130,14 +130,7 @@ class TestbookNotebookClient(NotebookClient):
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             except CellExecutionError as ce:
-                # Look for in-built Python exception
-                eclass = None
-                for klass in all_subclasses(Exception):
-                    if klass.__name__ == ce.ename:
-                        eclass = klass
-                        break
-
-                raise TestbookRuntimeError(ce.evalue, ce, eclass)
+                raise TestbookRuntimeError(ce.evalue, ce, self._get_error_class(ce.ename))
 
             executed_cells.append(cell)
 
@@ -240,6 +233,11 @@ class TestbookNotebookClient(NotebookClient):
         self.cells.insert(inject_idx, code_cell)
 
         cell = TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
+
+        if self._contains_error(cell):
+            eclass = self._get_error_class(cell.get('outputs')[0]['ename'])
+            evalue = cell.get('outputs')[0]['evalue']
+            raise TestbookRuntimeError(evalue, evalue, eclass)
 
         if run and pop:
             self.cells.pop(inject_idx)
@@ -349,3 +347,16 @@ class TestbookNotebookClient(NotebookClient):
         yield TestbookObjectReference(self, mock_object)
 
         self.inject(f"{patcher}.stop()")
+
+    @staticmethod
+    def _get_error_class(ename):
+        eclass = None
+        for klass in all_subclasses(Exception):
+            if klass.__name__ == ename:
+                eclass = klass
+                break
+        return eclass
+
+    @staticmethod
+    def _contains_error(result):
+        return result.get('outputs') and result.get('outputs')[0].output_type == "error"
