@@ -31,7 +31,7 @@ class TestbookNotebookClient(NotebookClient):
         kw['extra_arguments'] = ea
         super().__init__(nb, km=km, **kw)
 
-    def ref(self, name: str) -> TestbookObjectReference:
+    def ref(self, name: str) -> Union[TestbookObjectReference, Any]:
         """
         Return a reference to an object in the kernel
         """
