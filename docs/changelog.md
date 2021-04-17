@@ -1,12 +1,15 @@
 # Changelog
 
+## 0.4.1
+
+- check for errors when `allow_errors` is true
+
 ## 0.4.0
 
 - Testbook now returns actual object for JSON serializable objects instead of reference objects. Please note that this may break tests written with prior versions. 
 
 ## 0.3.0
 
-- Fixed issue which caused the Python underscore to interfere with testbook internal methods
 - Implemented container methods
 -- __len__
 -- __iter__
