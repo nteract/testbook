@@ -58,7 +58,7 @@ Consider the following code cell in a Jupyter Notebook:
 def foo(name):
     return f"You passed {name}!"
 
-my_list = ['spam', 'eggs']
+my_list = ['list', 'from', 'notebook']
 ```
 
 Reference objects to functions can be called with,
@@ -76,7 +76,7 @@ def test_foo(tb):
 
     # passing in reference object as arg
     my_list = tb.ref("my_list")
-    assert foo(my_list) == "You passed ['spam', 'eggs']!"
+    assert foo(my_list) == "You passed ['list', 'from', 'notebook']!"
 ```
 
 ### Testing function/class returning a non-serializable value
