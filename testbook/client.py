@@ -87,6 +87,8 @@ class TestbookNotebookClient(NotebookClient):
         for output in cell["outputs"]:
             if 'text' in output:
                 text += output['text']
+            elif "data" in output and "text/plain" in output["data"]:
+                text += output["data"]["text/plain"]
 
         return text.strip()
 

@@ -18,6 +18,13 @@ def test_execute_cell(notebook):
     assert notebook.cell_output_text(3) == 'foo'
 
 
+def test_execute_and_show_pandas_output(notebook):
+    notebook.execute_cell(4)
+    assert notebook.cell_output_text(4) == """col1  col2
+0     1     3
+1     2     4"""
+
+
 def test_execute_cell_tags(notebook):
     notebook.execute_cell('test1')
     assert notebook.cell_output_text('test1') == 'hello world\n[1, 2, 3]'
