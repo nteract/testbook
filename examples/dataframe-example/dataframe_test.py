@@ -16,3 +16,4 @@ def test_dataframe_manipulation(tb):
 
     # Inject assertion into notebook
     tb.inject("assert len(df) == 1")
+    
