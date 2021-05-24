@@ -4,25 +4,51 @@
 
 ## Installing `testbook`
 
+Using a virtual environment or system Python:
+
 ```{code-block} bash
 pip install testbook
 ```
 
+Using Anaconda:
+
+```{code-block} bash
+conda install testbook
+```
+
+## What is a Jupyter Notebook?
+
+[An introduction to Jupyter](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
+
+## Installing and Launching Jupyter Notebook
+
+[How to install Jupyter](https://jupyterlab.readthedocs.io/en/stable/getting_started/installation.html)
+
+```{code-block} bash
+jupyter lab
+```
+
 ## Create your first test
 
-Consider the following code cell in a Jupyter Notebook,
+Create a new notebook:
+
+To do add image
+
+Write the following code into the first cell of a Jupyter Notebook:
 
 ```{code-block} python
 def foo(x):
     return x + 1
 ```
 
-Here is the unit test for it which must be written in a Python module (`.py` file).
+Save this Notebook as `notebook.ipynb`.
+
+Create a new `.py` file. In this new file, write the following unit test:
 
 ```{code-block} python
 from testbook import testbook
 
-@testbook('/path/to/notebook.ipynb', execute=True)
+@testbook('notebook.ipynb', execute=True)
 def test_foo(tb):
     foo = tb.ref("foo")
 
