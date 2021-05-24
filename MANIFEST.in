@@ -28,3 +28,5 @@ prune binder
 prune .tox
 # Build files
 prune azure-pipelines.yml
+# Exclude examples
+prune examples
