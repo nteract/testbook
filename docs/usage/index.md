@@ -20,7 +20,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
    @testbook('/path/to/notebook.ipynb', execute=True)
    def test_func(tb):
-       func = tb.ref("func")
+       func = tb.get("func")
 
        assert func(1, 2) == 3
   ```
@@ -33,7 +33,7 @@ These patterns are interchangeable in most cases. If there are nested decorators
 
    def test_func():
        with testbook('/path/to/notebook.ipynb', execute=True) as tb:
-           func = tb.ref("func")
+           func = tb.get("func")
 
            assert func(1, 2) == 3
   ```
@@ -69,13 +69,13 @@ Reference objects to functions can be called with,
 ```{code-block} python
 @testbook.testbook('/path/to/notebook.ipynb', execute=True)
 def test_foo(tb):
-    foo = tb.ref("foo")
+    foo = tb.get("foo")
 
     # passing in explicitly
     assert foo(['spam', 'eggs']) == "You passed ['spam', 'eggs']!"
 
     # passing in reference object as arg
-    my_list = tb.ref("my_list")
+    my_list = tb.get("my_list")
     assert foo(my_list) == "You passed ['list', 'from', 'notebook']!"
 ```
 
@@ -97,7 +97,7 @@ When `Foo` is instantiated from the test, the return value will be a reference o
 ```{code-block} python
 @testbook.testbook('/path/to/notebook.ipynb', execute=True)
 def test_say_hello(tb):
-    Foo = tb.ref("Foo")
+    Foo = tb.get("Foo")
     bar = Foo("bar")
 
     assert bar.say_hello() == "Hello bar!"
@@ -134,17 +134,17 @@ def tb():
         yield tb
 
 def test_foo(tb):
-    foo = tb.ref("foo")
+    foo = tb.get("foo")
     assert foo(1, 2) == 3
 
 
 def test_bar(tb):
-    bar = tb.ref("bar")
+    bar = tb.get("bar")
 
     tb.inject("""
         data = [1, 2, 3]
     """)
-    data = tb.ref("data")
+    data = tb.get("data")
 
     assert bar(data) == [2, 4, 6]
 ```
@@ -168,7 +168,7 @@ def foo():
 @testbook('/path/to/notebook.ipynb', execute=True)
 def test_method(tb):
     with tb.patch('__main__.bar') as mock_bar:
-        foo = tb.ref("foo")
+        foo = tb.get("foo")
         foo()
 
         mock_bar.assert_called_once()
@@ -184,7 +184,7 @@ my_dict = {'hello': 'world'}
 @testbook('/path/to/notebook.ipynb', execute=True)
 def test_my_dict(tb):
     with tb.patch('__main__.my_dict', {'hello' : 'new world'}) as mock_my_dict:
-        my_dict = tb.ref("my_dict")
+        my_dict = tb.get("my_dict")
         assert my_dict == {'hello' : 'new world'}
 
 ```

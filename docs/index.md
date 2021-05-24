@@ -31,7 +31,7 @@ from testbook import testbook
 
 @testbook('/path/to/notebook.ipynb', execute=True)
 def test_func(tb):
-   func = tb.ref("func")
+   func = tb.get("func")
 
    assert func(1, 2) == 3
 ```

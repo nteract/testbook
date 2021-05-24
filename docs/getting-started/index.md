@@ -50,7 +50,7 @@ from testbook import testbook
 
 @testbook('notebook.ipynb', execute=True)
 def test_foo(tb):
-    foo = tb.ref("foo")
+    foo = tb.get("foo")
 
     assert foo(2) == 3
 ```
@@ -61,6 +61,6 @@ That's it! You can now execute the test.
 
 1. Use `testbook.testbook` as a decorator or context manager to specify the path to the Jupyter Notebook. Passing `execute=True` will execute all the cells, and passing `execute=['cell-tag-1', 'cell-tag-2']` will only execute specific cells identified by cell tags.
 
-2. Obtain references to objects under test using the `.ref` method.
+2. Obtain references to objects under test using the `.get` method. 
 
 3. Write the test!
