@@ -50,7 +50,7 @@ from testbook import testbook
 
 @testbook('notebook.ipynb', execute=True)
 def test_foo(tb):
-    foo = tb.ref("foo")
+    foo = tb.get("foo")
 
     assert foo(2) == 3
 ```
