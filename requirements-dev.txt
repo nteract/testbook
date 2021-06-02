@@ -3,6 +3,7 @@ coverage
 ipython
 ipykernel
 ipywidgets
+pandas
 pytest>=4.1
 pytest-cov>=2.6.1
 check-manifest
