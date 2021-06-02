@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2
+
+- Documentation and CoC updates to improve developer access (Thank you PyLadies Vancouver!)
+- The `text/plain` media type is now visible when calling `notebook.cell_output_text(idx)`
+
 ## 0.4.1
 
 - check for errors when `allow_errors` is true
