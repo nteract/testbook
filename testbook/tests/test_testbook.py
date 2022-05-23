@@ -68,3 +68,11 @@ def test_testbook_with_notebook_node():
 
     with testbook(nb) as tb:
         assert tb.code_cells_executed == 0
+
+
+def test_function_with_testbook_decorator_returns_value():
+    @testbook('testbook/tests/resources/inject.ipynb')
+    def test_function(tb):
+        return "This should be returned"
+
+    assert test_function() == "This should be returned"

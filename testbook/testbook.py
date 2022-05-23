@@ -60,7 +60,7 @@ class testbook:
         def wrapper(*args, **kwargs):  # pragma: no cover
             with self.client.setup_kernel():
                 self._prepare()
-                func(self.client, *args, **kwargs)
+                return func(self.client, *args, **kwargs)
 
         wrapper.patchings = [self]
         return wrapper
