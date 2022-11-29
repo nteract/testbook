@@ -20,24 +20,31 @@ testbook helps you set up **conventional unit tests for your Jupyter Notebooks**
 
 Here is an example of a unit test written using testbook
 
-Consider the following code cell in a Jupyter Notebook:
+Consider the following code cell in a Jupyter Notebook `example_notebook.ipynb`:
 
 ```python
 def func(a, b):
    return a + b
 ```
 
-You would write a unit test using `testbook` in a Python file as follows:
+You would write a unit test using `testbook` in a Python file `example_test.py` as follows:
 
 ```python
+# example_test.py
 from testbook import testbook
 
 
-@testbook('/path/to/notebook.ipynb', execute=True)
+@testbook('/path/to/example_notebook.ipynb', execute=True)
 def test_func(tb):
    func = tb.get("func")
 
    assert func(1, 2) == 3
+```
+
+Then [pytest](https://github.com/pytest-dev/pytest) can be used to run the test:
+
+```{code-block} bash
+pytest example_test.py
 ```
 
 ## Installing `testbook`
