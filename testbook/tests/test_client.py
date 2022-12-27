@@ -111,3 +111,20 @@ def test_cell_execute_result_tagnotfound(notebook_factory):
     with testbook(nb) as tb:
         with pytest.raises(TestbookCellTagNotFoundError):
             tb.cell_execute_result("test")
+
+def test_filter_cells(notebook_factory):
+    nb = notebook_factory()
+    with testbook(nb) as tb:
+        # Skip single cell
+        cell_to_skip = 1
+        filtered_cells = tb._filter_cells(enumerate(tb.nb.cells), cell_to_skip)
+
+        for index, _ in filtered_cells:
+            assert index != cell_to_skip
+
+        # Skip multiple cells
+        cells_to_skip = [0, 2]
+        filtered_cells = tb._filter_cells(enumerate(tb.nb.cells), cells_to_skip)
+
+        for index, _ in filtered_cells:
+            assert index not in cells_to_skip

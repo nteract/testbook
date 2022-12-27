@@ -28,9 +28,17 @@ class testbook:
     attribute_name = None
 
     def __init__(
-        self, nb, execute=None, timeout=60, kernel_name='python3', allow_errors=False, **kwargs
+        self,
+        nb,
+        execute=None,
+        skip=None,
+        timeout=60,
+        kernel_name='python3',
+        allow_errors=False,
+        **kwargs
     ):
         self.execute = execute
+        self.skip = skip
         self.client = TestbookNotebookClient(
             nbformat.read(nb, as_version=4) if not isinstance(nb, nbformat.NotebookNode) else nb,
             timeout=timeout,
@@ -43,7 +51,7 @@ class testbook:
 
     def _prepare(self):
         if self.execute is True:
-            self.client.execute()
+            self.client.execute(skip=self.skip)
         elif self.execute not in [None, False]:
             self.client.execute_cell(self.execute)
 

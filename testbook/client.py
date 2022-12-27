@@ -138,13 +138,34 @@ class TestbookNotebookClient(NotebookClient):
 
         return executed_cells[0] if len(executed_cells) == 1 else executed_cells
 
-    def execute(self) -> None:
+    def execute(self, skip: Optional[Union[list, int]] = None) -> None:
         """
-        Executes all cells
+        Executes all cells.
+
+        If skip is passed, we will remove those cell(s) from the list of cells to be executed.
         """
 
-        for index, cell in enumerate(self.nb.cells):
+        cells = enumerate(self.nb.cells)
+
+        if skip is not None:
+            cells = self._filter_cells(cells, skip)
+
+        for index, cell in cells:
             super().execute_cell(cell, index)
+
+    @staticmethod
+    def _filter_cells(cells, skip: Optional[Union[list, int]]) -> List[tuple]:
+        """
+        Filter unwanted cells.
+        """
+        if skip is not None:
+            if isinstance(skip, int):
+                skip = [skip]
+
+            if not all(isinstance(x, int) for x in skip):
+                raise TestbookError('skip list should contain only integers')
+
+            return [(index, cell) for index, cell in cells if index not in skip]
 
     def cell_output_text(self, cell) -> str:
         """
