@@ -1,8 +1,20 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
-- replaced JSON serialization with cloudpickle. This allows extracting a much wider range of objects from the notebook subprocess.
+- replaced JSON serialization with cloudpickle. This allows extracting a much
+  wider range of objects from the notebook subprocess.
+- Reference semantics have changed. 
+    - Old behavior of `tb.get(name)` and `tb[name]`:
+        - a reference would be returned for non-JSON-serializable objects.
+        - a value would be returned for JSON-serializable objects.
+    - Old behavior of `tb.ref(name)` was identical to `tb.get(name)`.
+    - However, now almost all objects are serializable and as a result, under
+      the old semantics, a reference would almost never be returned. Therefore,
+      when a reference is desired, we now require explicitly requesting a
+      reference. The new behavior of `tb.get(name)` and `tb[name]` is to always
+      return the deserialized object and to never return a reference. The new
+      behavior of `tb.ref(name)` is to always return a reference.
 
 ## 0.4.2
 
