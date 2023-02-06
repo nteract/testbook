@@ -10,7 +10,7 @@ class TestbookCellTagNotFoundError(TestbookError):
 
 
 class TestbookSerializeError(TestbookError):
-    """Raised when output cannot be JSON serialized"""
+    """Raised when output cannot be serialized"""
 
     pass
 

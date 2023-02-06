@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 from nbclient import NotebookClient
 from nbclient.exceptions import CellExecutionError
 from nbformat.v4 import new_code_cell
+import cloudpickle
 
 from .exceptions import (
     TestbookCellTagNotFoundError,
@@ -38,17 +39,13 @@ class TestbookNotebookClient(NotebookClient):
 
         # Check if exists
         self.inject(name, pop=True)
-        try:
-            self.inject(f"import json; json.dumps({name})", pop=True)
-            return self.value(name)
-        except Exception:
-            return TestbookObjectReference(self, name)
+        return TestbookObjectReference(self, name)
 
     def get(self, item):
-        return self.ref(item)
+        return self.value(item)
 
     def __getitem__(self, item):
-        return self.ref(item)
+        return self.value(item)
 
     @staticmethod
     def _construct_call_code(
@@ -248,11 +245,7 @@ class TestbookNotebookClient(NotebookClient):
 
     def value(self, code: str) -> Any:
         """
-        Execute given code in the kernel and return JSON serializeable result.
-
-        If the result is not JSON serializeable, it raises `TestbookAttributeError`.
-        This error object will also contain an attribute called `save_varname` which
-        can be used to create a reference object with :meth:`ref`.
+        Execute given code in the kernel and returns the serializeable result.
 
         Parameters
         ----------
@@ -276,35 +269,30 @@ class TestbookNotebookClient(NotebookClient):
             raise TestbookExecuteResultNotFoundError(
                 'code provided does not produce execute_result'
             )
-
+            
         save_varname = random_varname()
 
-        inject_code = f"""
-            import json
-            from IPython import get_ipython
-            from IPython.display import JSON
-
-            {save_varname} = get_ipython().last_execution_result.result
-
-            json.dumps({save_varname})
-            JSON({{"value" : {save_varname}}})
-        """
-
-        try:
-            outputs = self.inject(inject_code, pop=True).outputs
-
-            if outputs[0].output_type == "error":
-                # will receive error when `allow_errors` is set to True
-                raise TestbookRuntimeError(
-                    outputs[0].evalue, outputs[0].traceback, outputs[0].ename
-                )
-
-            return outputs[0].data['application/json']['value']
-
-        except TestbookRuntimeError:
-            e = TestbookSerializeError('could not JSON serialize output')
-            e.save_varname = save_varname
-            raise e
+        import tempfile
+        with tempfile.NamedTemporaryFile() as tmp:
+            try: 
+                inject_code = f"""
+                    import cloudpickle
+                    {save_varname} = get_ipython().last_execution_result.result
+                    with open('{tmp.name}', 'wb') as f:
+                        cloudpickle.dump({save_varname}, f)
+                """
+                outputs = self.inject(inject_code, pop=True).outputs
+                if len(outputs) > 0 and outputs[0].output_type == "error":
+                    # will receive error when `allow_errors` is set to True
+                    raise TestbookRuntimeError(
+                        outputs[0].evalue, outputs[0].traceback, outputs[0].ename
+                    )
+                with open(tmp.name, 'rb') as f:
+                    return cloudpickle.load(f) 
+            except TestbookRuntimeError:
+                e = TestbookSerializeError('could not serialize output')
+                e.save_varname = save_varname
+                raise e
 
     @contextmanager
     def patch(self, target, **kwargs):

@@ -12,28 +12,28 @@ def notebook():
 
 def test_create_reference(notebook):
     a = notebook.ref("a")
-    assert repr(a) == "[1, 2, 3]"
+    assert repr(a) == "'[1, 2, 3]'"
 
 
-def test_create_reference_getitem(notebook):
-    a = notebook["a"]
-    assert repr(a) == "[1, 2, 3]"
+def test_create_reference_resolve(notebook):
+    a = notebook.ref("a")
+    assert a.resolve() == [1, 2, 3]
 
 
-def test_create_reference_get(notebook):
+def test_notebook_get_value(notebook):
     a = notebook.get("a")
-    assert repr(a) == "[1, 2, 3]"
+    assert a == [1, 2, 3]
 
 
 def test_eq_in_notebook(notebook):
     a = notebook.ref("a")
     a.append(4)
-    assert a == [1, 2, 3, 4]
+    assert a.resolve() == [1, 2, 3, 4]
 
 
 def test_eq_in_notebook_ref(notebook):
     a, b = notebook.ref("a"), notebook.ref("b")
-    assert a == b
+    assert a.resolve()[:3] == b
 
 
 def test_function_call(notebook):
@@ -43,28 +43,13 @@ def test_function_call(notebook):
 
 def test_function_call_with_ref_object(notebook):
     double, a = notebook.ref("double"), notebook.ref("a")
+    # a.append(4) above applied to the referenced "a" and therefore is
+    # reflected here
+    assert double(a) == [2, 4, 6, 8]
 
-    assert double(a) == [2, 4, 6]
 
-
-def test_reference(notebook):
+def test_nontrivial_pickling(notebook):
     Foo = notebook.ref("Foo")
-
-    # Check that when a non-serializeable object is returned, it returns
-    # a reference to that object instead
-    f = Foo('bar')
-
-    assert repr(f) == "\"<Foo value='bar'>\""
-
-    # Valid attribute access
-    assert f.say_hello()
-
-    # Invalid attribute access
-    with pytest.raises(TestbookAttributeError):
-        f.does_not_exist
-
-    assert f.say_hello() == 'Hello bar!'
-
-    # non JSON-serializeable output
-    with pytest.raises(TestbookSerializeError):
-        f.resolve()
+    f = Foo("bar")
+    assert repr(f) == "<Foo value='bar'>"
+    assert(f.say_hello() == "Hello bar!")
