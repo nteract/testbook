@@ -12,28 +12,28 @@ def notebook():
 
 def test_create_reference(notebook):
     a = notebook.ref("a")
-    assert repr(a) == "[1, 2, 3]"
+    assert repr(a) == "'[1, 2, 3]'"
 
 
-def test_create_reference_getitem(notebook):
-    a = notebook["a"]
-    assert repr(a) == "[1, 2, 3]"
+def test_create_reference_resolve(notebook):
+    a = notebook.ref("a")
+    assert a.resolve() == [1, 2, 3]
 
 
-def test_create_reference_get(notebook):
+def test_notebook_get_value(notebook):
     a = notebook.get("a")
-    assert repr(a) == "[1, 2, 3]"
+    assert a == [1, 2, 3]
 
 
 def test_eq_in_notebook(notebook):
     a = notebook.ref("a")
     a.append(4)
-    assert a == [1, 2, 3, 4]
+    assert a.resolve() == [1, 2, 3, 4]
 
 
 def test_eq_in_notebook_ref(notebook):
     a, b = notebook.ref("a"), notebook.ref("b")
-    assert a == b
+    assert a.resolve()[:3] == b
 
 
 def test_function_call(notebook):
@@ -43,8 +43,9 @@ def test_function_call(notebook):
 
 def test_function_call_with_ref_object(notebook):
     double, a = notebook.ref("double"), notebook.ref("a")
-
-    assert double(a) == [2, 4, 6]
+    # a.append(4) above applied to the referenced "a" and therefore is
+    # reflected here
+    assert double(a) == [2, 4, 6, 8]
 
 
 def test_nontrivial_pickling(notebook):

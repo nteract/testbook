@@ -39,17 +39,13 @@ class TestbookNotebookClient(NotebookClient):
 
         # Check if exists
         self.inject(name, pop=True)
-        try:
-            self.inject(f"import cloudpickle; cloudpickle.dumps({name})", pop=True)
-            return self.value(name)
-        except Exception:
-            return TestbookObjectReference(self, name)
+        return TestbookObjectReference(self, name)
 
     def get(self, item):
-        return self.ref(item)
+        return self.value(item)
 
     def __getitem__(self, item):
-        return self.ref(item)
+        return self.value(item)
 
     @staticmethod
     def _construct_call_code(
@@ -251,9 +247,6 @@ class TestbookNotebookClient(NotebookClient):
         """
         Execute given code in the kernel and returns the serializeable result.
 
-        This error object will also contain an attribute called `save_varname` which
-        can be used to create a reference object with :meth:`ref`.
-
         Parameters
         ----------
         code: str
@@ -276,14 +269,17 @@ class TestbookNotebookClient(NotebookClient):
             raise TestbookExecuteResultNotFoundError(
                 'code provided does not produce execute_result'
             )
+            
+        save_varname = random_varname()
 
         import tempfile
         with tempfile.NamedTemporaryFile() as tmp:
             try: 
                 inject_code = f"""
                     import cloudpickle
+                    {save_varname} = get_ipython().last_execution_result.result
                     with open('{tmp.name}', 'wb') as f:
-                        cloudpickle.dump(get_ipython().last_execution_result.result, f)
+                        cloudpickle.dump({save_varname}, f)
                 """
                 outputs = self.inject(inject_code, pop=True).outputs
                 if len(outputs) > 0 and outputs[0].output_type == "error":
@@ -294,7 +290,9 @@ class TestbookNotebookClient(NotebookClient):
                 with open(tmp.name, 'rb') as f:
                     return cloudpickle.load(f) 
             except TestbookRuntimeError:
-                raise TestbookSerializeError('could not serialize output')
+                e = TestbookSerializeError('could not serialize output')
+                e.save_varname = save_varname
+                raise e
 
     @contextmanager
     def patch(self, target, **kwargs):
