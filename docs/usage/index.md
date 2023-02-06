@@ -63,7 +63,7 @@ my_list = ['list', 'from', 'notebook']
 
 Reference objects to functions can be called with,
 
-- explicit JSON serializable values (like `dict`, `list`, `int`, `float`, `str`, `bool`, etc)
+- explicit cloudpickle-serializable values (almost all Python objects)
 - other reference objects
 
 ```{code-block} python

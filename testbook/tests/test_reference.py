@@ -47,24 +47,8 @@ def test_function_call_with_ref_object(notebook):
     assert double(a) == [2, 4, 6]
 
 
-def test_reference(notebook):
+def test_nontrivial_pickling(notebook):
     Foo = notebook.ref("Foo")
-
-    # Check that when a non-serializeable object is returned, it returns
-    # a reference to that object instead
-    f = Foo('bar')
-
-    assert repr(f) == "\"<Foo value='bar'>\""
-
-    # Valid attribute access
-    assert f.say_hello()
-
-    # Invalid attribute access
-    with pytest.raises(TestbookAttributeError):
-        f.does_not_exist
-
-    assert f.say_hello() == 'Hello bar!'
-
-    # non JSON-serializeable output
-    with pytest.raises(TestbookSerializeError):
-        f.resolve()
+    f = Foo("bar")
+    assert repr(f) == "<Foo value='bar'>"
+    assert(f.say_hello() == "Hello bar!")

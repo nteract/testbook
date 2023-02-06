@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- replaced JSON serialization with cloudpickle. This allows extracting a much wider range of objects from the notebook subprocess.
+
 ## 0.4.2
 
 - Documentation and CoC updates to improve developer access (Thank you PyLadies Vancouver!)
