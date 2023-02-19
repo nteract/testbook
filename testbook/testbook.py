@@ -47,7 +47,7 @@ class testbook:
         elif self.execute not in [None, False]:
             self.client.execute_cell(self.execute)
 
-    def __enter__(self):
+    def __enter__(self) -> TestbookNotebookClient:
         with self.client.setup_kernel(cleanup_kc=False):
             self._prepare()
             return self.client
