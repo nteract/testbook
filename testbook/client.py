@@ -45,6 +45,11 @@ class TestbookNotebookClient(NotebookClient):
             return TestbookObjectReference(self, name)
 
     def get(self, item):
+        """
+        Return a reference to an object in the kernel
+
+        Equivalent to `ref`.
+        """
         return self.ref(item)
 
     def __getitem__(self, item):
