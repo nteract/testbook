@@ -10,7 +10,7 @@ class TestbookNode(NotebookNode):
         super().__init__(*args, **kw)
 
     @property
-    def output_text(self):
+    def output_text(self) -> str:
         text = ''
         for output in self['outputs']:
             if 'text' in output:
