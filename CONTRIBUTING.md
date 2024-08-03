@@ -54,7 +54,7 @@ For the most basic test runs against python 3.11 use this tox subset (callable a
 tox -e py311
 ```
 
-This will just execute the unittests against python 3.6 in a new virtual env. The first run will take longer to setup the virtualenv, but will be fast after that point.
+This will just execute the unittests against python 3.11 in a new virtual env. The first run will take longer to setup the virtualenv, but will be fast after that point.
 
 For a full test suite of all envs and linting checks simply run tox without any arguments
 
@@ -62,7 +62,7 @@ For a full test suite of all envs and linting checks simply run tox without any 
 tox
 ```
 
-This will require python3.5, python3.6, python3.7, and python 3.8 to be installed.
+This will require python3.7, and python 3.8 to be installed.
 
 Alternavitely pytest can be used if you have an environment already setup which works or has custom packages not present in the tox build.
 

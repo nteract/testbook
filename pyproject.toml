@@ -20,15 +20,13 @@ authors = [
   { name = "Rohit Sanjay", email = "sanjay.rohit2@gmail.com" },
   { name = "Matthew Seal", email = "mseal007@gmail.com" },
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 
 classifiers = [
   "Intended Audience :: Developers",
   "License :: OSI Approved :: BSD License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.6",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
