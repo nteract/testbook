@@ -11,10 +11,10 @@ class TestbookNode(NotebookNode):
 
     @property
     def output_text(self) -> str:
-        text = ''
-        for output in self['outputs']:
-            if 'text' in output:
-                text += output['text']
+        text = ""
+        for output in self["outputs"]:
+            if "text" in output:
+                text += output["text"]
 
         return text.strip()
 
@@ -24,5 +24,5 @@ class TestbookNode(NotebookNode):
         return [
             output["data"]
             for output in self["outputs"]
-            if output["output_type"] == 'execute_result'
+            if output["output_type"] == "execute_result"
         ]

@@ -43,12 +43,11 @@ dependencies = [
   "nbformat>=5.0.4",
 ]
 optional-dependencies.dev = [
-  "black; python_version>='3.6'",
+  "ruff",
   "bumpversion",
   "check-manifest",
   "codecov",
   "coverage",
-  "flake8",
   "ipykernel",
   "ipython",
   "ipywidgets",
@@ -71,38 +70,6 @@ urls.Documentation = "https://testbook.readthedocs.io"
 urls.Funding = "https://nteract.io"
 urls.Issues = "https://github.com/nteract/testbook/issues"
 urls.Repository = "https://github.com/nteract/testbook/"
-
-[tool.black]
-line-length = 100
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | build
-  | dist
-)/
-'''
-skip-string-normalization = true
-
-[tool.flake8]
-exclude = "testbook/__init__.py"
-ignore = [
-  "E20",  # Extra space in brackets
-  "E231",
-  "E241", # Multiple spaces around ","
-  "E26",  # Comments
-  "E4",   # Import formatting
-  "E721", # Comparing types instead of isinstance
-  "E731", # Assigning lambda expression
-]
-max-line-length = 120
-
-# Not sure I need this?
-# [tool.bdist_wheel]
-# universal = 0
 
 [tool.pytest.ini_options]
 filterwarnings = "always"
@@ -130,3 +97,83 @@ omit = [
   "testbook/tests/*",
   "testbook/_version.py",
 ]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "testbook/__init__.py",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = false
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"

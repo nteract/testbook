@@ -20,10 +20,10 @@ def notebook_factory():
         for name in kernelspec.find_kernel_specs():
             ks = kernelspec.get_kernel_spec(name)
             metadata = {
-                'kernelspec': {
-                    'name': name,
-                    'language': ks.language,
-                    'display_name': ks.display_name,
+                "kernelspec": {
+                    "name": name,
+                    "language": ks.language,
+                    "display_name": ks.display_name,
                 }
             }
             break
@@ -32,12 +32,12 @@ def notebook_factory():
             all_cells = cells
         else:  # Default cells
             all_cells = [
-                new_code_cell('a = 2', metadata={"tags": []}),
-                new_code_cell('b=22\nb', metadata={"tags": ["test"]}),
+                new_code_cell("a = 2", metadata={"tags": []}),
+                new_code_cell("b=22\nb", metadata={"tags": ["test"]}),
                 new_code_cell(
                     "",
                     metadata={"tags": ["dummy-outputs"]},
-                    outputs=[new_output('execute_result', data={"text/plain": "text"})],
+                    outputs=[new_output("execute_result", data={"text/plain": "text"})],
                 ),
             ]
 

@@ -1,8 +1,9 @@
 from testbook import testbook
 
-@testbook('./dataframe-assertion-example.ipynb')
+
+@testbook("./dataframe-assertion-example.ipynb")
 def test_dataframe_manipulation(tb):
-    tb.execute_cell('imports')
+    tb.execute_cell("imports")
 
     # Inject a dataframe with code
     tb.inject(
@@ -12,7 +13,7 @@ def test_dataframe_manipulation(tb):
     )
 
     # Perform manipulation
-    tb.execute_cell('manipulation')
+    tb.execute_cell("manipulation")
 
     # Inject assertion into notebook
     tb.inject("assert len(df) == 1")

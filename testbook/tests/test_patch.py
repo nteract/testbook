@@ -4,9 +4,9 @@ from ..exceptions import TestbookRuntimeError
 import pytest
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def tb():
-    with testbook('testbook/tests/resources/patch.ipynb', execute=True) as tb:
+    with testbook("testbook/tests/resources/patch.ipynb", execute=True) as tb:
         yield tb
 
 
@@ -27,14 +27,15 @@ class TestPatch:
             mock_obj.assert_called_once()
 
     def test_patch_return_value(self, tb):
-        with tb.patch("os.listdir", return_value=['file1', 'file2']) as mock_listdir:
-            assert tb.ref("listdir")() == ['file1', 'file2']
+        with tb.patch("os.listdir", return_value=["file1", "file2"]) as mock_listdir:
+            assert tb.ref("listdir")() == ["file1", "file2"]
             mock_listdir.assert_called_once()
 
 
 class TestPatchDict:
     @pytest.mark.parametrize(
-        "in_dict, values", [("os.environ", {"PATH": "/usr/bin"})],
+        "in_dict, values",
+        [("os.environ", {"PATH": "/usr/bin"})],
     )
     def test_patch_dict(self, in_dict, values, tb):
         with tb.patch_dict(in_dict, values, clear=True):

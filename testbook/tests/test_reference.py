@@ -4,9 +4,9 @@ from ..testbook import testbook
 from ..exceptions import TestbookAttributeError, TestbookSerializeError
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def notebook():
-    with testbook('testbook/tests/resources/reference.ipynb', execute=True) as tb:
+    with testbook("testbook/tests/resources/reference.ipynb", execute=True) as tb:
         yield tb
 
 
@@ -52,7 +52,7 @@ def test_reference(notebook):
 
     # Check that when a non-serializeable object is returned, it returns
     # a reference to that object instead
-    f = Foo('bar')
+    f = Foo("bar")
 
     assert repr(f) == "\"<Foo value='bar'>\""
 
@@ -63,7 +63,7 @@ def test_reference(notebook):
     with pytest.raises(TestbookAttributeError):
         f.does_not_exist
 
-    assert f.say_hello() == 'Hello bar!'
+    assert f.say_hello() == "Hello bar!"
 
     # non JSON-serializeable output
     with pytest.raises(TestbookSerializeError):

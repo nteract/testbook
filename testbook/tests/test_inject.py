@@ -3,9 +3,9 @@ import pytest
 from ..testbook import testbook
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def notebook():
-    with testbook('testbook/tests/resources/inject.ipynb', execute=True) as tb:
+    with testbook("testbook/tests/resources/inject.ipynb", execute=True) as tb:
         yield tb
 
 
@@ -20,11 +20,11 @@ def inject_helper(*args, **kwargs):
         ([1, 2], None),
         ((1, 2), None),
         ((True, False), None),
-        (['a', 'b'], None),
-        ([1.1, float('nan'), float('inf'), float('-inf')], None),
-        ([{'key1': 'value1'}, {'key2': 'value2'}], None),
-        ((1, 2, False), {'key2': 'value2'}),
-        ((None, None, False), {'key2': 'value2'}),
+        (["a", "b"], None),
+        ([1.1, float("nan"), float("inf"), float("-inf")], None),
+        ([{"key1": "value1"}, {"key2": "value2"}], None),
+        ((1, 2, False), {"key2": "value2"}),
+        ((None, None, False), {"key2": "value2"}),
     ],
 )
 def test_inject(args, kwargs, notebook):
@@ -35,19 +35,19 @@ def test_inject(args, kwargs, notebook):
     "code_block, expected_text",
     [
         (
-            '''
+            """
             def foo():
                 print('I ran in the code block')
             foo()
-        ''',
+        """,
             "I ran in the code block",
         ),
         (
-            '''
+            """
             def foo(arg):
                 print(f'You passed {arg}')
             foo('bar')
-        ''',
+        """,
             "You passed bar",
         ),
     ],
@@ -57,7 +57,7 @@ def test_inject_code_block(code_block, expected_text, notebook):
 
 
 def test_inject_raises_exception(notebook):
-    values = [3, {'key': 'value'}, ['a', 'b', 'c'], (1, 2, 3), {1, 2, 3}]
+    values = [3, {"key": "value"}, ["a", "b", "c"], (1, 2, 3), {1, 2, 3}]
 
     for value in values:
         with pytest.raises(TypeError):
@@ -76,5 +76,5 @@ def test_inject_before_after(notebook):
 
 
 def test_inject_pop(notebook):
-    assert notebook.inject("1+1", pop=True).execute_result == [{'text/plain': '2'}]
+    assert notebook.inject("1+1", pop=True).execute_result == [{"text/plain": "2"}]
     assert notebook.cells[-1].source != "1+1"

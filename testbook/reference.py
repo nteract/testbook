@@ -2,7 +2,7 @@ from .exceptions import (
     TestbookExecuteResultNotFoundError,
     TestbookAttributeError,
     TestbookSerializeError,
-    TestbookRuntimeError
+    TestbookRuntimeError,
 )
 from .utils import random_varname
 from .translators import PythonTranslator
@@ -52,7 +52,9 @@ class TestbookObjectReference:
 
     def __getitem__(self, key):
         try:
-            return self.tb.value(f"{self.name}.__getitem__({PythonTranslator.translate(key)})")
+            return self.tb.value(
+                f"{self.name}.__getitem__({PythonTranslator.translate(key)})"
+            )
         except TestbookRuntimeError as e:
             if e.eclass is TypeError:
                 raise TypeError(e.evalue)
@@ -63,11 +65,14 @@ class TestbookObjectReference:
 
     def __setitem__(self, key, value):
         try:
-            return self.tb.inject("{name}[{key}] = {value}".format(
-                name=self.name,
-                key=PythonTranslator.translate(key),
-                value=PythonTranslator.translate(value)
-            ), pop=True)
+            return self.tb.inject(
+                "{name}[{key}] = {value}".format(
+                    name=self.name,
+                    key=PythonTranslator.translate(key),
+                    value=PythonTranslator.translate(value),
+                ),
+                pop=True,
+            )
         except TestbookRuntimeError as e:
             if e.eclass is TypeError:
                 raise TypeError(e.evalue)
@@ -77,7 +82,9 @@ class TestbookObjectReference:
                 raise
 
     def __contains__(self, item):
-        return self.tb.value(f"{self.name}.__contains__({PythonTranslator.translate(item)})")
+        return self.tb.value(
+            f"{self.name}.__contains__({PythonTranslator.translate(item)})"
+        )
 
     def __call__(self, *args, **kwargs):
         code = self.tb._construct_call_code(self.name, args, kwargs)

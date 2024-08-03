@@ -25,10 +25,13 @@ class TestbookNotebookClient(NotebookClient):
 
     def __init__(self, nb, km=None, **kw):
         # Fix the ipykernel 5.5 issue where execute requests after errors are aborted
-        ea = kw.get('extra_arguments', [])
-        if not any(arg.startswith('--Kernel.stop_on_error_timeout') for arg in self.extra_arguments):
-            ea.append('--Kernel.stop_on_error_timeout=0')
-        kw['extra_arguments'] = ea
+        ea = kw.get("extra_arguments", [])
+        if not any(
+            arg.startswith("--Kernel.stop_on_error_timeout")
+            for arg in self.extra_arguments
+        ):
+            ea.append("--Kernel.stop_on_error_timeout=0")
+        kw["extra_arguments"] = ea
         super().__init__(nb, km=km, **kw)
 
     def ref(self, name: str) -> Union[TestbookObjectReference, Any]:
@@ -80,7 +83,7 @@ class TestbookNotebookClient(NotebookClient):
         return [
             output["data"]
             for output in cell["outputs"]
-            if output["output_type"] == 'execute_result'
+            if output["output_type"] == "execute_result"
         ]
 
     @staticmethod
@@ -88,10 +91,10 @@ class TestbookNotebookClient(NotebookClient):
         if "outputs" not in cell:
             raise ValueError("cell must be a code cell")
 
-        text = ''
+        text = ""
         for output in cell["outputs"]:
-            if 'text' in output:
-                text += output['text']
+            if "text" in output:
+                text += output["text"]
             elif "data" in output and "text/plain" in output["data"]:
                 text += output["data"]["text/plain"]
 
@@ -105,11 +108,11 @@ class TestbookNotebookClient(NotebookClient):
         if isinstance(tag, int):
             return tag
         elif not isinstance(tag, str):
-            raise TypeError('expected tag as str')
+            raise TypeError("expected tag as str")
 
         for idx, cell in enumerate(self.cells):
-            metadata = cell['metadata']
-            if "tags" in metadata and tag in metadata['tags']:
+            metadata = cell["metadata"]
+            if "tags" in metadata and tag in metadata["tags"]:
                 return idx
 
         raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
@@ -121,7 +124,7 @@ class TestbookNotebookClient(NotebookClient):
         if isinstance(cell, slice):
             start, stop = self._cell_index(cell.start), self._cell_index(cell.stop)
             if cell.step is not None:
-                raise TestbookError('testbook does not support step argument')
+                raise TestbookError("testbook does not support step argument")
 
             cell = range(start, stop + 1)
         elif isinstance(cell, str) or isinstance(cell, int):
@@ -135,9 +138,11 @@ class TestbookNotebookClient(NotebookClient):
         executed_cells = []
         for idx in cell_indexes:
             try:
-                cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
+                cell = super().execute_cell(self.nb["cells"][idx], idx, **kwargs)
             except CellExecutionError as ce:
-                raise TestbookRuntimeError(ce.evalue, ce, self._get_error_class(ce.ename))
+                raise TestbookRuntimeError(
+                    ce.evalue, ce, self._get_error_class(ce.ename)
+                )
 
             executed_cells.append(cell)
 
@@ -156,7 +161,7 @@ class TestbookNotebookClient(NotebookClient):
         Return cell text output
         """
         cell_index = self._cell_index(cell)
-        return self._output_text(self.nb['cells'][cell_index])
+        return self._output_text(self.nb["cells"][cell_index])
 
     def cell_execute_result(self, cell: Union[int, str]) -> List[Dict[str, Any]]:
         """Return the execute results of cell at a given index or with a given tag.
@@ -183,7 +188,7 @@ class TestbookNotebookClient(NotebookClient):
             If tag is not found
         """
         cell_index = self._cell_index(cell)
-        return self._execute_result(self.nb['cells'][cell_index])
+        return self._execute_result(self.nb["cells"][cell_index])
 
     def inject(
         self,
@@ -222,10 +227,12 @@ class TestbookNotebookClient(NotebookClient):
             lines = dedent(code)
         elif callable(code):
             lines = getsource(code) + (
-                dedent(self._construct_call_code(code.__name__, args, kwargs)) if run else ''
+                dedent(self._construct_call_code(code.__name__, args, kwargs))
+                if run
+                else ""
             )
         else:
-            raise TypeError('can only inject function or code block as str')
+            raise TypeError("can only inject function or code block as str")
 
         inject_idx = len(self.cells)
 
@@ -239,11 +246,15 @@ class TestbookNotebookClient(NotebookClient):
         code_cell = new_code_cell(lines)
         self.cells.insert(inject_idx, code_cell)
 
-        cell = TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
+        cell = (
+            TestbookNode(self.execute_cell(inject_idx))
+            if run
+            else TestbookNode(code_cell)
+        )
 
         if self._contains_error(cell):
-            eclass = self._get_error_class(cell.get('outputs')[0]['ename'])
-            evalue = cell.get('outputs')[0]['evalue']
+            eclass = self._get_error_class(cell.get("outputs")[0]["ename"])
+            evalue = cell.get("outputs")[0]["evalue"]
             raise TestbookRuntimeError(evalue, evalue, eclass)
 
         if run and pop:
@@ -279,7 +290,7 @@ class TestbookNotebookClient(NotebookClient):
 
         if not self._execute_result(result):
             raise TestbookExecuteResultNotFoundError(
-                'code provided does not produce execute_result'
+                "code provided does not produce execute_result"
             )
 
         save_varname = random_varname()
@@ -304,18 +315,18 @@ class TestbookNotebookClient(NotebookClient):
                     outputs[0].evalue, outputs[0].traceback, outputs[0].ename
                 )
 
-            return outputs[0].data['application/json']['value']
+            return outputs[0].data["application/json"]["value"]
 
         except TestbookRuntimeError:
-            e = TestbookSerializeError('could not JSON serialize output')
+            e = TestbookSerializeError("could not JSON serialize output")
             e.save_varname = save_varname
             raise e
 
     @contextmanager
     def patch(self, target, **kwargs):
         """Used as contextmanager to patch objects in the kernel"""
-        mock_object = f'_mock_{random_varname()}'
-        patcher = f'_patcher_{random_varname()}'
+        mock_object = f"_mock_{random_varname()}"
+        patcher = f"_patcher_{random_varname()}"
 
         self.inject(
             f"""
@@ -335,8 +346,8 @@ class TestbookNotebookClient(NotebookClient):
     @contextmanager
     def patch_dict(self, in_dict, values=(), clear=False, **kwargs):
         """Used as contextmanager to patch dictionaries in the kernel"""
-        mock_object = f'_mock_{random_varname()}'
-        patcher = f'_patcher_{random_varname()}'
+        mock_object = f"_mock_{random_varname()}"
+        patcher = f"_patcher_{random_varname()}"
 
         self.inject(
             f"""
@@ -366,4 +377,4 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _contains_error(result):
-        return result.get('outputs') and result.get('outputs')[0].output_type == "error"
+        return result.get("outputs") and result.get("outputs")[0].output_type == "error"
