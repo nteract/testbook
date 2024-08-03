@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "testbook"
-copyright = "2020, nteract team"
+copyright = "2024, nteract team"
 author = "nteract team"
 
 
@@ -51,7 +51,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "testbook"
-copyright = "2020, nteract team"
+copyright = "2024, nteract team"
 author = "nteract team"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -61,7 +61,7 @@ author = "nteract team"
 
 
 # The short X.Y version.
-version = read_version(project).split(".")[0:2]
+version = '.'.join(read_version(project).split(".")[0:2])
 
 # The full version, including alpha/beta/rc tags.
 release = read_version(project)
@@ -71,7 +71,7 @@ release = read_version(project)
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line foexitr these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -108,15 +108,6 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
-
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# This is required for the alabaster theme
-# refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    "**": ["about.html", "navigation.html", "relations.html", "searchbox.html"]
-}
 
 html_title = "testbook"
 
@@ -176,4 +167,7 @@ texinfo_documents = [
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"https://docs.python.org/": None}
+intersphinx_mapping = {"python": ("https://docs.python.org/", None)}
+
+# Generate heading anchors for h1, h2 and h3.
+myst_heading_anchors = 3

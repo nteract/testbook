@@ -61,11 +61,12 @@ optional-dependencies.dev = [
   "twine>=1.11",
   "xmltodict",
 ]
-optional-dependencies.test = [
-  "myst-parser==0.9.1",
-  "sphinx>=1.7,<3",
-  "sphinx-book-theme==0.0.35",
+optional-dependencies.docs = [
+  "myst-parser==3.0.1",
+  "sphinx==7.4.7",
+  "sphinx-book-theme==1.1.3",
 ]
+
 urls.Documentation = "https://testbook.readthedocs.io"
 urls.Funding = "https://nteract.io"
 urls.Issues = "https://github.com/nteract/testbook/issues"

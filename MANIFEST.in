@@ -5,8 +5,6 @@ recursive-include testbook *.yaml
 recursive-include testbook *.keep
 recursive-include testbook *.txt
 
-include setup.py
-include requirements*.txt
 include tox.ini
 include pytest.ini
 include README.md
