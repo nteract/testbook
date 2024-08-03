@@ -88,7 +88,7 @@ exclude = '''
 skip-string-normalization = true
 
 [tool.flake8]
-exclude = "__init__.py"
+exclude = "testbook/__init__.py"
 ignore = [
   "E20",  # Extra space in brackets
   "E231",
