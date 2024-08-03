@@ -1,10 +1,9 @@
 [build-system]
+requires = [ "setuptools" ]
 build-backend = "setuptools.build_meta"
 
-requires = [ "setuptools" ]
-
 [project]
-name = "testbook_rohitsanjay"
+name = "testbook"
 version = "0.4.2"
 description = "A unit testing framework for Jupyter Notebooks"
 readme = "README.md"
