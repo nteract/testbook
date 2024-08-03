@@ -1,29 +1,132 @@
-# Example configuration for Black.
+[build-system]
+build-backend = "setuptools.build_meta"
 
-# NOTE: you have to use single-quoted strings in TOML for regular expressions.
-# It's the equivalent of r-strings in Python.  Multiline strings are treated as
-# verbose regular expressions by Black.  Use [ ] to denote a significant space
-# character.
+requires = [ "setuptools" ]
+
+[project]
+name = "testbook_rohitsanjay"
+version = "0.4.2"
+description = "A unit testing framework for Jupyter Notebooks"
+readme = "README.md"
+keywords = [ "jupyter", "notebook", "nteract", "unit-testing" ]
+license = { file = "LICENSE" }
+maintainers = [
+  { name = "Nteract Contributors", email = "nteract@googlegroups.com" },
+  { name = "Rohit Sanjay", email = "sanjay.rohit2@gmail.com" },
+  { name = "Matthew Seal", email = "mseal007@gmail.com" },
+]
+authors = [
+  { name = "Nteract Contributors", email = "nteract@googlegroups.com" },
+  { name = "Rohit Sanjay", email = "sanjay.rohit2@gmail.com" },
+  { name = "Matthew Seal", email = "mseal007@gmail.com" },
+]
+requires-python = ">=3.6"
+
+classifiers = [
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Testing :: Mocking",
+  "Topic :: Software Development :: Testing :: Unit",
+]
+dependencies = [
+  "nbclient>=0.4",
+  "nbformat>=5.0.4",
+]
+optional-dependencies.dev = [
+  "black; python_version>='3.6'",
+  "bumpversion",
+  "check-manifest",
+  "codecov",
+  "coverage",
+  "flake8",
+  "ipykernel",
+  "ipython",
+  "ipywidgets",
+  "pandas",
+  "pip>=18.1",
+  "pytest>=4.1",
+  "pytest-cov>=2.6.1",
+  "setuptools>=38.6",
+  "tox",
+  "build",
+  "twine>=1.11",
+  "xmltodict",
+]
+optional-dependencies.test = [
+  "myst-parser==0.9.1",
+  "sphinx>=1.7,<3",
+  "sphinx-book-theme==0.0.35",
+]
+urls.Documentation = "https://testbook.readthedocs.io"
+urls.Funding = "https://nteract.io"
+urls.Issues = "https://github.com/nteract/testbook/issues"
+urls.Repository = "https://github.com/nteract/testbook/"
 
 [tool.black]
 line-length = 100
-include = '\.pyi?$'
 exclude = '''
 /(
     \.git
-  | \.hg
   | \.mypy_cache
   | \.tox
   | \.venv
   | _build
-  | buck-out
   | build
   | dist
-
-  # The following are specific to Black, you probably don't want those.
-  | blib2to3
-  | tests/data
-  | profiling
 )/
 '''
 skip-string-normalization = true
+
+[tool.flake8]
+exclude = "__init__.py"
+ignore = [
+  "E20",  # Extra space in brackets
+  "E231",
+  "E241", # Multiple spaces around ","
+  "E26",  # Comments
+  "E4",   # Import formatting
+  "E721", # Comparing types instead of isinstance
+  "E731", # Assigning lambda expression
+]
+max-line-length = 120
+
+# Not sure I need this?
+# [tool.bdist_wheel]
+# universal = 0
+
+[tool.pytest.ini_options]
+filterwarnings = "always"
+testpaths = [
+  "testbook/tests/",
+]
+
+[tool.coverage.run]
+branch = false
+omit = [
+  "testbook/tests/*",
+  "testbook/_version.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "if self\\.debug:",
+  "pragma: no cover",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == '__main__':",
+]
+ignore_errors = true
+omit = [
+  "testbook/tests/*",
+  "testbook/_version.py",
+]
