@@ -43,7 +43,6 @@ optional-dependencies.dev = [
   "ruff",
   "bumpversion",
   "check-manifest",
-  "codecov",
   "coverage",
   "ipykernel",
   "ipython",
