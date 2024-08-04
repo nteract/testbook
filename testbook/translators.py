@@ -8,16 +8,16 @@ class Translator(object):
     @classmethod
     def translate_raw_str(cls, val):
         """Reusable by most interpreters"""
-        return "{}".format(val)
+        return '{}'.format(val)
 
     @classmethod
     def translate_escaped_str(cls, str_val):
         """Reusable by most interpreters"""
         if isinstance(str_val, str):
-            str_val = str_val.encode("unicode_escape")
+            str_val = str_val.encode('unicode_escape')
             if sys.version_info >= (3, 0):
-                str_val = str_val.decode("utf-8")
-            str_val = str_val.replace('"', r"\"")
+                str_val = str_val.decode('utf-8')
+            str_val = str_val.replace('"', r'\"')
         return '"{}"'.format(str_val)
 
     @classmethod
@@ -43,18 +43,18 @@ class Translator(object):
     @classmethod
     def translate_bool(cls, val):
         """Default behavior for translation"""
-        return "true" if val else "false"
+        return 'true' if val else 'false'
 
     @classmethod
     def translate_dict(cls, val):
         raise NotImplementedError(
-            "dict type translation not implemented for {}".format(cls)
+            'dict type translation not implemented for {}'.format(cls)
         )
 
     @classmethod
     def translate_list(cls, val):
         raise NotImplementedError(
-            "list type translation not implemented for {}".format(cls)
+            'list type translation not implemented for {}'.format(cls)
         )
 
     @classmethod
@@ -77,7 +77,7 @@ class Translator(object):
             return cls.translate_list(val)
         elif isinstance(val, tuple):
             return cls.translate_tuple(val)
-        elif val.__class__.__name__ == "TestbookObjectReference":
+        elif val.__class__.__name__ == 'TestbookObjectReference':
             return val.name
 
         # Use this generic translation as a last resort
@@ -86,12 +86,12 @@ class Translator(object):
     @classmethod
     def comment(cls, cmt_str):
         raise NotImplementedError(
-            "comment translation not implemented for {}".format(cls)
+            'comment translation not implemented for {}'.format(cls)
         )
 
     @classmethod
     def assign(cls, name, str_val):
-        return "{} = {}".format(name, str_val)
+        return '{} = {}'.format(name, str_val)
 
 
 class PythonTranslator(Translator):
@@ -112,20 +112,20 @@ class PythonTranslator(Translator):
 
     @classmethod
     def translate_dict(cls, val):
-        escaped = ", ".join(
+        escaped = ', '.join(
             [
-                "{}: {}".format(cls.translate_str(k), cls.translate(v))
+                '{}: {}'.format(cls.translate_str(k), cls.translate(v))
                 for k, v in val.items()
             ]
         )
-        return "{{{}}}".format(escaped)
+        return '{{{}}}'.format(escaped)
 
     @classmethod
     def translate_list(cls, val):
-        escaped = ", ".join([cls.translate(v) for v in val])
-        return "[{}]".format(escaped)
+        escaped = ', '.join([cls.translate(v) for v in val])
+        return '[{}]'.format(escaped)
 
     @classmethod
     def translate_tuple(cls, val):
-        escaped = ", ".join([cls.translate(v) for v in val]) + ", "
-        return "({})".format(escaped)
+        escaped = ', '.join([cls.translate(v) for v in val]) + ', '
+        return '({})'.format(escaped)

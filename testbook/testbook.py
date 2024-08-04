@@ -32,7 +32,7 @@ class testbook:
         nb,
         execute=None,
         timeout=60,
-        kernel_name="python3",
+        kernel_name='python3',
         allow_errors=False,
         **kwargs,
     ):
