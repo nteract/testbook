@@ -10,13 +10,13 @@ def notebook():
 
 
 def test_len(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     assert len(mylist) == 5
 
 
 def test_iter(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     expected = []
     for x in mylist:
@@ -26,7 +26,7 @@ def test_iter(notebook):
 
 
 def test_getitem(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
     mylist.append(6)
 
     assert mylist[-1] == 6
@@ -34,14 +34,14 @@ def test_getitem(notebook):
 
 
 def test_getitem_raisesIndexError(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     with pytest.raises(IndexError):
         mylist[100]
 
 
 def test_getitem_raisesTypeError(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     with pytest.raises(TypeError):
         mylist['hello']
@@ -49,25 +49,25 @@ def test_getitem_raisesTypeError(notebook):
 
 def test_setitem(notebook):
     notebook.inject("mydict = {'key1': 'value1', 'key2': 'value1'}")
-    mydict = notebook.ref("mydict")
+    mydict = notebook.ref('mydict')
 
     mydict['key3'] = 'value3'
     assert mydict['key3'] == 'value3'
 
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
     mylist[2] = 10
     assert mylist[2] == 10
 
 
 def test_setitem_raisesIndexError(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     with pytest.raises(IndexError):
         mylist.__setitem__(10, 100)
 
 
 def test_setitem_raisesTypeError(notebook):
-    mylist = notebook.ref("mylist")
+    mylist = notebook.ref('mylist')
 
     with pytest.raises(TypeError):
         mylist.__setitem__('key', 10)
@@ -75,7 +75,7 @@ def test_setitem_raisesTypeError(notebook):
 
 def test_contains(notebook):
     notebook.inject("mydict = {'key1': 'value1', 'key2': 'value1'}")
-    mydict = notebook.ref("mydict")
+    mydict = notebook.ref('mydict')
 
     assert 'key1' in mydict
     assert 'key2' in mydict

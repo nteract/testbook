@@ -1,4 +1,5 @@
 """Sourced from https://github.com/nteract/papermill/blob/master/papermill/translators.py"""
+
 import math
 import sys
 
@@ -46,11 +47,15 @@ class Translator(object):
 
     @classmethod
     def translate_dict(cls, val):
-        raise NotImplementedError('dict type translation not implemented for {}'.format(cls))
+        raise NotImplementedError(
+            'dict type translation not implemented for {}'.format(cls)
+        )
 
     @classmethod
     def translate_list(cls, val):
-        raise NotImplementedError('list type translation not implemented for {}'.format(cls))
+        raise NotImplementedError(
+            'list type translation not implemented for {}'.format(cls)
+        )
 
     @classmethod
     def translate(cls, val):
@@ -72,7 +77,7 @@ class Translator(object):
             return cls.translate_list(val)
         elif isinstance(val, tuple):
             return cls.translate_tuple(val)
-        elif val.__class__.__name__ == "TestbookObjectReference":
+        elif val.__class__.__name__ == 'TestbookObjectReference':
             return val.name
 
         # Use this generic translation as a last resort
@@ -80,7 +85,9 @@ class Translator(object):
 
     @classmethod
     def comment(cls, cmt_str):
-        raise NotImplementedError('comment translation not implemented for {}'.format(cls))
+        raise NotImplementedError(
+            'comment translation not implemented for {}'.format(cls)
+        )
 
     @classmethod
     def assign(cls, name, str_val):
@@ -106,7 +113,10 @@ class PythonTranslator(Translator):
     @classmethod
     def translate_dict(cls, val):
         escaped = ', '.join(
-            ["{}: {}".format(cls.translate_str(k), cls.translate(v)) for k, v in val.items()]
+            [
+                '{}: {}'.format(cls.translate_str(k), cls.translate(v))
+                for k, v in val.items()
+            ]
         )
         return '{{{}}}'.format(escaped)
 

@@ -26,7 +26,10 @@ class TestbookNotebookClient(NotebookClient):
     def __init__(self, nb, km=None, **kw):
         # Fix the ipykernel 5.5 issue where execute requests after errors are aborted
         ea = kw.get('extra_arguments', [])
-        if not any(arg.startswith('--Kernel.stop_on_error_timeout') for arg in self.extra_arguments):
+        if not any(
+            arg.startswith('--Kernel.stop_on_error_timeout')
+            for arg in self.extra_arguments
+        ):
             ea.append('--Kernel.stop_on_error_timeout=0')
         kw['extra_arguments'] = ea
         super().__init__(nb, km=km, **kw)
@@ -39,7 +42,7 @@ class TestbookNotebookClient(NotebookClient):
         # Check if exists
         self.inject(name, pop=True)
         try:
-            self.inject(f"import json; json.dumps({name})", pop=True)
+            self.inject(f'import json; json.dumps({name})', pop=True)
             return self.value(name)
         except Exception:
             return TestbookObjectReference(self, name)
@@ -78,22 +81,22 @@ class TestbookNotebookClient(NotebookClient):
         """
 
         return [
-            output["data"]
-            for output in cell["outputs"]
-            if output["output_type"] == 'execute_result'
+            output['data']
+            for output in cell['outputs']
+            if output['output_type'] == 'execute_result'
         ]
 
     @staticmethod
     def _output_text(cell) -> str:
-        if "outputs" not in cell:
-            raise ValueError("cell must be a code cell")
+        if 'outputs' not in cell:
+            raise ValueError('cell must be a code cell')
 
         text = ''
-        for output in cell["outputs"]:
+        for output in cell['outputs']:
             if 'text' in output:
                 text += output['text']
-            elif "data" in output and "text/plain" in output["data"]:
-                text += output["data"]["text/plain"]
+            elif 'data' in output and 'text/plain' in output['data']:
+                text += output['data']['text/plain']
 
         return text.strip()
 
@@ -109,7 +112,7 @@ class TestbookNotebookClient(NotebookClient):
 
         for idx, cell in enumerate(self.cells):
             metadata = cell['metadata']
-            if "tags" in metadata and tag in metadata['tags']:
+            if 'tags' in metadata and tag in metadata['tags']:
                 return idx
 
         raise TestbookCellTagNotFoundError("Cell tag '{}' not found".format(tag))
@@ -137,7 +140,9 @@ class TestbookNotebookClient(NotebookClient):
             try:
                 cell = super().execute_cell(self.nb['cells'][idx], idx, **kwargs)
             except CellExecutionError as ce:
-                raise TestbookRuntimeError(ce.evalue, ce, self._get_error_class(ce.ename))
+                raise TestbookRuntimeError(
+                    ce.evalue, ce, self._get_error_class(ce.ename)
+                )
 
             executed_cells.append(cell)
 
@@ -222,7 +227,9 @@ class TestbookNotebookClient(NotebookClient):
             lines = dedent(code)
         elif callable(code):
             lines = getsource(code) + (
-                dedent(self._construct_call_code(code.__name__, args, kwargs)) if run else ''
+                dedent(self._construct_call_code(code.__name__, args, kwargs))
+                if run
+                else ''
             )
         else:
             raise TypeError('can only inject function or code block as str')
@@ -230,7 +237,7 @@ class TestbookNotebookClient(NotebookClient):
         inject_idx = len(self.cells)
 
         if after is not None and before is not None:
-            raise ValueError("pass either before or after as kwargs")
+            raise ValueError('pass either before or after as kwargs')
         elif before is not None:
             inject_idx = self._cell_index(before)
         elif after is not None:
@@ -239,7 +246,11 @@ class TestbookNotebookClient(NotebookClient):
         code_cell = new_code_cell(lines)
         self.cells.insert(inject_idx, code_cell)
 
-        cell = TestbookNode(self.execute_cell(inject_idx)) if run else TestbookNode(code_cell)
+        cell = (
+            TestbookNode(self.execute_cell(inject_idx))
+            if run
+            else TestbookNode(code_cell)
+        )
 
         if self._contains_error(cell):
             eclass = self._get_error_class(cell.get('outputs')[0]['ename'])
@@ -298,7 +309,7 @@ class TestbookNotebookClient(NotebookClient):
         try:
             outputs = self.inject(inject_code, pop=True).outputs
 
-            if outputs[0].output_type == "error":
+            if outputs[0].output_type == 'error':
                 # will receive error when `allow_errors` is set to True
                 raise TestbookRuntimeError(
                     outputs[0].evalue, outputs[0].traceback, outputs[0].ename
@@ -330,7 +341,7 @@ class TestbookNotebookClient(NotebookClient):
 
         yield TestbookObjectReference(self, mock_object)
 
-        self.inject(f"{patcher}.stop()")
+        self.inject(f'{patcher}.stop()')
 
     @contextmanager
     def patch_dict(self, in_dict, values=(), clear=False, **kwargs):
@@ -353,7 +364,7 @@ class TestbookNotebookClient(NotebookClient):
 
         yield TestbookObjectReference(self, mock_object)
 
-        self.inject(f"{patcher}.stop()")
+        self.inject(f'{patcher}.stop()')
 
     @staticmethod
     def _get_error_class(ename):
@@ -366,4 +377,4 @@ class TestbookNotebookClient(NotebookClient):
 
     @staticmethod
     def _contains_error(result):
-        return result.get('outputs') and result.get('outputs')[0].output_type == "error"
+        return result.get('outputs') and result.get('outputs')[0].output_type == 'error'

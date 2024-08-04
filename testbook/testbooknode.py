@@ -22,7 +22,7 @@ class TestbookNode(NotebookNode):
     def execute_result(self):
         """Return data from execute_result outputs"""
         return [
-            output["data"]
-            for output in self["outputs"]
-            if output["output_type"] == 'execute_result'
+            output['data']
+            for output in self['outputs']
+            if output['output_type'] == 'execute_result'
         ]

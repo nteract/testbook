@@ -20,9 +20,12 @@ def test_execute_cell(notebook):
 
 def test_execute_and_show_pandas_output(notebook):
     notebook.execute_cell(4)
-    assert notebook.cell_output_text(4) == """col1  col2
+    assert (
+        notebook.cell_output_text(4)
+        == """col1  col2
 0     1     3
 1     2     4"""
+    )
 
 
 def test_execute_cell_tags(notebook):
@@ -36,9 +39,9 @@ def test_execute_cell_tags(notebook):
 def test_execute_cell_raises_error(notebook):
     with pytest.raises(TestbookRuntimeError):
         try:
-            notebook.inject("1/0", pop=True)
+            notebook.inject('1/0', pop=True)
         except TestbookRuntimeError as e:
-            assert e.eclass == ZeroDivisionError
+            assert e.eclass is ZeroDivisionError
             raise
 
 
@@ -61,13 +64,17 @@ def test_testbook_range():
         assert tb.code_cells_executed == 4
 
 
-@pytest.mark.parametrize("slice_params, expected_result", [(('hello', 'str'), 6), ((2, 5), 4)])
+@pytest.mark.parametrize(
+    'slice_params, expected_result', [(('hello', 'str'), 6), ((2, 5), 4)]
+)
 def test_testbook_slice(slice_params, expected_result):
     with testbook('testbook/tests/resources/inject.ipynb') as tb:
         tb.execute_cell(slice(*slice_params))
         assert tb.code_cells_executed == expected_result
 
-    with testbook('testbook/tests/resources/inject.ipynb', execute=slice(*slice_params)) as tb:
+    with testbook(
+        'testbook/tests/resources/inject.ipynb', execute=slice(*slice_params)
+    ) as tb:
         assert tb.code_cells_executed == expected_result
 
 
@@ -80,7 +87,7 @@ def test_testbook_slice_raises_error():
 @testbook('testbook/tests/resources/exception.ipynb', execute=True)
 def test_raise_exception(tb):
     with pytest.raises(TestbookRuntimeError):
-        tb.ref("raise_my_exception")()
+        tb.ref('raise_my_exception')()
 
 
 @testbook('testbook/tests/resources/inject.ipynb')
@@ -97,6 +104,6 @@ def test_underscore(tb):
 
     tb.execute()
 
-    foo = tb.ref("foo")
+    foo = tb.ref('foo')
 
     assert foo(2) == 3

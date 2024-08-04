@@ -14,7 +14,7 @@ def inject_helper(*args, **kwargs):
 
 
 @pytest.mark.parametrize(
-    "args, kwargs",
+    'args, kwargs',
     [
         (None, None),
         ([1, 2], None),
@@ -32,23 +32,23 @@ def test_inject(args, kwargs, notebook):
 
 
 @pytest.mark.parametrize(
-    "code_block, expected_text",
+    'code_block, expected_text',
     [
         (
-            '''
+            """
             def foo():
                 print('I ran in the code block')
             foo()
-        ''',
-            "I ran in the code block",
+        """,
+            'I ran in the code block',
         ),
         (
-            '''
+            """
             def foo(arg):
                 print(f'You passed {arg}')
             foo('bar')
-        ''',
-            "You passed bar",
+        """,
+            'You passed bar',
         ),
     ],
 )
@@ -65,16 +65,16 @@ def test_inject_raises_exception(notebook):
 
 
 def test_inject_before_after(notebook):
-    notebook.inject("say_hello()", run=False, after="hello")
-    assert notebook.cells[notebook._cell_index("hello") + 1].source == "say_hello()"
+    notebook.inject('say_hello()', run=False, after='hello')
+    assert notebook.cells[notebook._cell_index('hello') + 1].source == 'say_hello()'
 
-    notebook.inject("say_bye()", before="hello")
-    assert notebook.cells[notebook._cell_index("hello") - 1].source == "say_bye()"
+    notebook.inject('say_bye()', before='hello')
+    assert notebook.cells[notebook._cell_index('hello') - 1].source == 'say_bye()'
 
     with pytest.raises(ValueError):
-        notebook.inject("say_hello()", before="hello", after="bye")
+        notebook.inject('say_hello()', before='hello', after='bye')
 
 
 def test_inject_pop(notebook):
-    assert notebook.inject("1+1", pop=True).execute_result == [{'text/plain': '2'}]
-    assert notebook.cells[-1].source != "1+1"
+    assert notebook.inject('1+1', pop=True).execute_result == [{'text/plain': '2'}]
+    assert notebook.cells[-1].source != '1+1'

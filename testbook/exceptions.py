@@ -1,5 +1,6 @@
 class TestbookError(Exception):
     """Generic Testbook exception class"""
+
     __test__ = False
 
 

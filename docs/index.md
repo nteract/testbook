@@ -5,9 +5,9 @@
 [![Coverage Status][codecov-badge]][codecov-link]
 [![Documentation Status][rtd-badge]][rtd-link]
 [![PyPI][pypi-badge]][pypi-link]
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
-[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
+[![image](https://img.shields.io/pypi/v/testbook.svg)](https://pypi.python.org/pypi/testbook)
+[![image](https://img.shields.io/pypi/l/testbook.svg)](https://github.com/astral-sh/testbook/blob/main/LICENSE)
+[![image](https://img.shields.io/pypi/pyversions/testbook.svg)](https://pypi.python.org/pypi/testbook)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 **testbook** is a unit testing framework for testing code in Jupyter Notebooks.
@@ -41,9 +41,9 @@ def test_func(tb):
 ## Features
 
 - Write conventional unit tests for Jupyter Notebooks
-- [Execute all or some specific cells before unit test](usage/index.html#using-execute-to-control-which-cells-are-executed-before-test)
-- [Share kernel context across multiple tests](usage/index.html#share-kernel-context-across-multiple-tests) (using pytest fixtures)
-- [Support for patching objects](usage/index.html#support-for-patching-objects)
+- [Execute all or some specific cells before unit test](usage/index.md#using-execute-to-control-which-cells-are-executed-before-test)
+- [Share kernel context across multiple tests](usage/index.md#share-kernel-context-across-multiple-tests) (using pytest fixtures)
+- [Support for patching objects](usage/index.md#support-for-patching-objects)
 - Inject code into Jupyter notebooks
 - Works with any unit testing library - unittest, pytest or nose
 
