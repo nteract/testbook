@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - First check that the CHANGELOG is up to date for the next release version
-- Ensure dev requirements are installed `pip install -r requirements-dev.txt`
+- Ensure dev requirements are installed `pip install ".[dev]"`
 
 ## Push to GitHub
 
@@ -19,6 +19,6 @@ git push upstream && git push upstream --tags
 ```bash
 rm -rf dist/*
 rm -rf build/*
-python setup.py bdist_wheel
+python -m build
 twine upload dist/*
 ```
